@@ -1,0 +1,277 @@
+// ============================================================
+// Skema database MULAWARMANESIA (MySQL, InnoDB = mendukung ACID)
+// File ini mendefinisikan semua tabel. Prisma membuat tipe TypeScript
+// otomatis dari sini, jadi kode lain tidak perlu menulis tipe data lagi.
+// ============================================================
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+// ---------- Enum: daftar pilihan yang diizinkan ----------
+
+/// Jenis produk yang dijual
+enum Product {
+  PDH
+  VEST
+}
+
+/// Siklus status pesanan (urutan maju dijaga di lib/domain/order-status.ts)
+enum OrderStatus {
+  menunggu_pembayaran
+  kedaluwarsa
+  dibayar
+  cek_desain
+  perlu_revisi
+  produksi
+  qc
+  siap_kirim
+  dikirim
+  selesai
+  dibatalkan
+}
+
+/// Keadaan pembayaran, terpisah dari status produksi agar DP tidak membingungkan alur
+enum PaymentState {
+  belum_bayar
+  dp_dibayar
+  lunas
+}
+
+/// Skema bayar yang dipilih pelanggan
+enum PaymentScheme {
+  LUNAS
+  DP50
+}
+
+/// Cara pengiriman
+enum ShippingMethod {
+  KIRIM
+  AMBIL
+}
+
+/// Status satu transaksi pembayaran dari gateway
+enum PaymentStatus {
+  pending
+  sukses
+  gagal
+  kedaluwarsa
+}
+
+// ---------- Master data (diatur admin) ----------
+
+/// Kategori desain = template dasar (mis. PDH Organisasi)
+model Category {
+  id        Int       @id @default(autoincrement())
+  product   Product
+  name      String    @db.VarChar(60)
+  basePrice Int // harga dasar per pcs (rupiah)
+  items     OrderItem[]
+
+  @@unique([product, name])
+}
+
+/// Bahan kain dan tambahan harganya
+model Material {
+  id        Int       @id @default(autoincrement())
+  product   Product
+  name      String    @db.VarChar(60)
+  surcharge Int       @default(0) // tambahan harga per pcs
+  items     OrderItem[]
+
+  @@unique([product, name])
+}
+
+/// Palet warna kain sesuai stok
+model FabricColor {
+  id      Int     @id @default(autoincrement())
+  name    String  @unique @db.VarChar(40)
+  hex     String  @db.VarChar(7)
+  inStock Boolean @default(true)
+}
+
+/// Tarif ongkir tetap per wilayah
+model ShippingRate {
+  id    Int    @id @default(autoincrement())
+  zone  String @unique @db.VarChar(20) // samarinda | kaltim | luar_kaltim
+  label String @db.VarChar(60)
+  fee   Int
+}
+
+/// Kota yang bisa dipilih di form, dikaitkan ke zona ongkir
+model City {
+  id   Int    @id @default(autoincrement())
+  name String @unique @db.VarChar(60)
+  zone String @db.VarChar(20)
+}
+
+// ---------- Pesanan ----------
+
+/// Satu pesanan = satu desain (keputusan PRD v2.2)
+model Order {
+  id             Int            @id @default(autoincrement())
+  code           String         @unique @db.VarChar(20) // MLW-YYMM-NNNN
+  status         OrderStatus    @default(menunggu_pembayaran)
+  paymentState   PaymentState   @default(belum_bayar)
+  paymentScheme  PaymentScheme
+  customerName   String         @db.VarChar(60)
+  whatsapp       String         @db.VarChar(16) // sudah dinormalisasi 628...
+  email          String         @db.VarChar(120)
+  organization   String?        @db.VarChar(80)
+  shippingMethod ShippingMethod
+  address        String?        @db.VarChar(200)
+  city           String?        @db.VarChar(60)
+  postalCode     String?        @db.VarChar(5)
+  subtotal       Int
+  discount       Int            @default(0)
+  shippingFee    Int            @default(0)
+  total          Int
+  amountPaid     Int            @default(0)
+  trackingToken  String         @unique @db.VarChar(40)
+  courier        String?        @db.VarChar(40)
+  resi           String?        @db.VarChar(60)
+  revisionReason String?        @db.VarChar(300)
+  version        Int            @default(0) // penanda kunci optimistik: naik tiap perubahan status
+  createdAt      DateTime       @default(now())
+  expiresAt      DateTime // batas waktu bayar
+
+  items    OrderItem[]
+  payments Payment[]
+  logs     OrderStatusLog[]
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+/// Detail desain yang dipesan
+model OrderItem {
+  id          Int     @id @default(autoincrement())
+  orderId     Int
+  product     Product
+  categoryId  Int
+  materialId  Int
+  designJson  Json // warna per bagian + semua objek (logo/teks) agar bisa dirender ulang
+  bodyColor   String  @db.VarChar(40) // warna badan, dipakai statistik dashboard
+  notes       String? @db.VarChar(300)
+  namePerson  Boolean @default(false)
+  unitPrice   Int // harga per pcs yang dihitung server
+
+  order    Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  category Category     @relation(fields: [categoryId], references: [id])
+  material Material     @relation(fields: [materialId], references: [id])
+  sizes    OrderSize[]
+  names    OrderName[]
+  assets   OrderAsset[]
+}
+
+/// Jumlah pcs per ukuran
+model OrderSize {
+  id          Int    @id @default(autoincrement())
+  orderItemId Int
+  size        String @db.VarChar(5) // S, M, L, XL, XXL, XXXL
+  qty         Int
+
+  item OrderItem @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+
+  @@unique([orderItemId, size])
+}
+
+/// Nama per orang (opsional)
+model OrderName {
+  id          Int    @id @default(autoincrement())
+  orderItemId Int
+  name        String @db.VarChar(20)
+  size        String @db.VarChar(5)
+
+  item OrderItem @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+}
+
+/// File logo yang diunggah pelanggan
+model OrderAsset {
+  id          Int    @id @default(autoincrement())
+  orderItemId Int
+  fileName    String @db.VarChar(120) // nama file di folder storage/
+  technique   String @db.VarChar(10) // bordir | sablon
+  position    String @db.VarChar(30)
+
+  item OrderItem @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+}
+
+// ---------- Pembayaran & riwayat ----------
+
+/// Satu transaksi pembayaran. gatewayRef UNIK agar webhook ganda tidak dobel.
+model Payment {
+  id         Int           @id @default(autoincrement())
+  orderId    Int
+  gatewayRef String        @unique @db.VarChar(60)
+  method     String        @db.VarChar(20) // qris | va | ewallet
+  amount     Int
+  status     PaymentStatus @default(pending)
+  paidAt     DateTime?
+  rawPayload Json?
+  createdAt  DateTime      @default(now())
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([paidAt])
+}
+
+/// Riwayat status (hanya ditambah, tidak pernah diubah/dihapus)
+model OrderStatusLog {
+  id        Int         @id @default(autoincrement())
+  orderId   Int
+  status    OrderStatus
+  note      String?     @db.VarChar(300)
+  changedBy String      @db.VarChar(60) // 'sistem' atau email admin
+  changedAt DateTime    @default(now())
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+}
+
+/// Penghitung nomor pesanan per bulan (dikunci saat dipakai agar tidak kembar)
+model OrderCounter {
+  period     String @id @db.VarChar(4) // YYMM, mis. 2611
+  lastNumber Int    @default(0)
+}
+
+/// Peran akun panel admin
+enum AdminRole {
+  ADMIN
+  SUPERADMIN
+}
+
+/// Akun panel admin. ADMIN = kerja harian (pesanan); SUPERADMIN = juga mengatur data master, akun, dan pengaturan.
+model AdminUser {
+  id           Int       @id @default(autoincrement())
+  email        String    @unique @db.VarChar(120)
+  passwordHash String    @db.VarChar(100)
+  name         String    @db.VarChar(60)
+  role         AdminRole @default(ADMIN)
+  active       Boolean   @default(true) // akun nonaktif tidak bisa login
+  createdAt    DateTime  @default(now())
+}
+
+/// Catatan aktivitas admin (hanya ditambah, tidak pernah diubah/dihapus)
+model AuditLog {
+  id         Int      @id @default(autoincrement())
+  actorEmail String   @db.VarChar(120)
+  action     String   @db.VarChar(60) // mis. harga_kategori_diubah
+  target     String   @db.VarChar(120) // mis. PDH Organisasi
+  detail     String?  @db.VarChar(300) // mis. "185000 -> 200000"
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+/// Pengaturan sederhana (kunci -> nilai teks), mis. kapasitas produksi mingguan
+model Setting {
+  key   String @id @db.VarChar(60)
+  value String @db.VarChar(120)
+}

@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+/*
+ * Design token MULAWARMANESIA (gaya neo-brutalism) - sumber: file FigCraft.
+ * Semua warna, bayangan, dan sudut didefinisikan di SINI saja. Komponen cukup
+ * memakai nama seperti `bg-accent`, `shadow-hard`, `rounded-card`, sehingga
+ * mengganti tampilan cukup dengan mengubah file ini.
+ */
+@theme {
+  /* Warna dasar */
+  --color-page: #fff4f3; /* latar halaman: merah muda sangat terang */
+  --color-surface: #ffffff; /* kartu */
+  --color-subtle: #f1eeee;
+  --color-ink: #111111; /* teks utama + garis tebal */
+  --color-ink-soft: #3b3b3b; /* teks sekunder */
+  --color-ink-muted: #6b6b6b; /* teks pelengkap */
+  --color-line: #dedada; /* garis tipis */
+  --color-disabled: #b9b6b6;
+
+  /* Warna merek: hanya untuk aksi utama, harga, dan penekanan */
+  --color-accent: #c12822;
+  --color-accent-hover: #a01f1a;
+  --color-accent-subtle: #fce1df;
+  --color-salmon: #f6bab6; /* teks latar raksasa "PDH / VEST" di hero */
+  --color-blush: #ffedeb; /* kartu statistik merah muda */
+
+  /* Latar pastel untuk ilustrasi dan kartu statistik */
+  --color-pastel-blue: #dce7ff;
+  --color-pastel-mint: #d9f3e2;
+  --color-pastel-butter: #fff0c4;
+  --color-pastel-peach: #ffe1d3;
+
+  /* Status */
+  --color-success: #1e8e4e;
+  --color-warning: #d9920f;
+  --color-danger: #a01f1a;
+  --color-info: #2b62d6;
+
+  /* Bayangan keras tanpa blur */
+  --shadow-hard-sm: 3px 3px 0 0 #111111;
+  --shadow-hard: 5px 5px 0 0 #111111;
+  --shadow-hard-lg: 8px 8px 0 0 #111111;
+  --shadow-hard-accent: 5px 5px 0 0 #c12822;
+  --shadow-hard-accent-sm: 3px 3px 0 0 #c12822;
+
+  /* Sudut membulat */
+  --radius-control: 8px;
+  --radius-card: 16px;
+  --radius-panel: 24px;
+
+  /* Font: Poppins dimuat di layout.tsx */
+  --font-sans: var(--font-poppins), system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-page);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+/* Fokus keyboard yang jelas (aksesibilitas) */
+:focus-visible {
+  outline: 3px solid var(--color-info);
+  outline-offset: 2px;
+}
+
+/* Strip berjalan di bagian atas landing (marquee) */
+/* Berjalan ke KANAN: mulai dari setengah lebar ke kiri lalu bergeser kembali ke 0 */
+@keyframes marquee {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-marquee {
+  animation: marquee 28s linear infinite;
+}
+
+/* Loncat ke section lewat tautan #id: sisakan ruang agar tidak tertutup navbar yang menempel */
+[id] {
+  scroll-margin-top: 5rem;
+}
+
+/* Hormati pengguna yang mematikan animasi */
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee { animation: none; }
+  html { scroll-behavior: auto; }
+}
