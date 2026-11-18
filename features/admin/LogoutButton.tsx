@@ -36,7 +36,7 @@ export function LogoutButton({ compact = false }: { compact?: boolean }) {
       </Button>
       <Modal open={open} title="Keluar dari akun?" onClose={() => !busy && setOpen(false)}>
         <p className="text-sm text-ink-soft">Kamu perlu masuk lagi untuk membuka panel admin.</p>
-        <div className="mt-5 flex justify-end gap-3">
+        <div className="mt-5 modal-actions flex justify-end gap-3">
           <Button variant="secondary" onClick={() => setOpen(false)} disabled={busy}>Batal</Button>
           <Button onClick={logout} disabled={busy}>{busy ? "Keluar…" : "Ya, keluar"}</Button>
         </div>

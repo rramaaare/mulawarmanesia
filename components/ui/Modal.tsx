@@ -26,14 +26,14 @@ export function Modal({ open, title, onClose, children }: ModalProps) {
 
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/60 p-4" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink/60 p-4 sm:items-center" onClick={onClose}>
       <div
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-label={title}
         tabIndex={-1}
-        className="w-full max-w-md rounded-panel border-2 border-ink bg-surface p-6 shadow-hard-lg"
+        className="max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-y-auto rounded-panel border-2 border-ink bg-surface p-5 shadow-hard-lg sm:p-6 [&_.modal-actions]:flex-col-reverse sm:[&_.modal-actions]:flex-row [&_.modal-actions>*]:w-full sm:[&_.modal-actions>*]:w-auto"
         onClick={(event) => event.stopPropagation()}
       >
         <h2 className="mb-3 text-xl font-semibold">{title}</h2>

@@ -34,16 +34,16 @@ export function CategoryStrip({ catalog }: { catalog: Catalog }) {
           <ParallaxLayer speed={0.6} axis="x" distance={480} className="flex w-max gap-5">
             {catalog.categories.map((category, index) => (
               <Link key={category.id} href={`/editor?kategori=${category.id}`} className="group">
-                <Card pressable className="flex h-[170px] w-[290px] items-stretch justify-between gap-3 !p-4">
+                <Card pressable className="flex h-[170px] w-[280px] items-stretch md:w-[290px] justify-between gap-3 !p-4">
                   <div className="flex flex-col justify-between">
                     <div>
-                      <p className="text-sm font-semibold">{category.product}</p>
-                      <p className="text-sm font-semibold">{category.name}</p>
-                      <p className="mt-1 text-[11px] text-ink-muted">Mulai {shortPrice(category.basePrice)}</p>
+                      <p className="text-base font-semibold md:text-sm">{category.product}</p>
+                      <p className="text-base font-semibold md:text-sm">{category.name}</p>
+                      <p className="mt-1 text-xs text-ink-muted">Mulai {shortPrice(category.basePrice)}</p>
                     </div>
                     <span className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-ink text-xs" aria-hidden>→</span>
                   </div>
-                  <div className={cn("flex w-[120px] items-center justify-center rounded-card border-2 border-ink", TONES[index % TONES.length])}>
+                  <div className={cn("flex w-[128px] items-center justify-center rounded-control md:w-[120px] md:rounded-card border-2 border-ink", TONES[index % TONES.length])}>
                     <Garment product={category.product} colors={category.product === "PDH" ? PDH_RED : VEST_BLACK} className="h-24 w-auto" />
                   </div>
                 </Card>

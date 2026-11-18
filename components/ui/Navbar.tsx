@@ -1,10 +1,13 @@
 "use client";
 /**
  * Komponen Navbar: bilah navigasi selebar layar yang menempel di atas (sticky).
- * Di layar lebar tampil menu mendatar, di mobile menjadi tombol menu yang membuka daftar tautan.
+ * Di layar lebar tampil menu mendatar; di mobile menjadi tombol hamburger (ikon) yang membuka
+ * daftar tautan di bawah bilah dan menutup bila ditekan lagi atau tombol Esc.
  */
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { cn } from "@/lib/cn";
 import { Button } from "./Button";
+import { HamburgerButton } from "./HamburgerButton";
 import { Logo } from "./Logo";
 
 /** Daftar tautan menu. `href` memakai "/#id" untuk loncat ke section di landing. */
@@ -16,11 +19,19 @@ const LINKS = [
   { label: "Lacak Pesanan", href: "/lacak" },
 ];
 
-export function Navbar() {
+export function Navbar({ className }: { className?: string }) {
   const [open, setOpen] = useState(false); // menu mobile terbuka?
 
+  // Esc menutup menu
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (event: KeyboardEvent) => event.key === "Escape" && setOpen(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
   return (
-    <header className="sticky top-0 z-40 border-b-2 border-ink bg-surface print:hidden">
+    <header className={cn("sticky top-0 z-40 border-b-2 border-ink bg-surface print:hidden", className)}>
       <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 md:px-8" aria-label="Navigasi utama">
         <Logo />
 
@@ -42,16 +53,8 @@ export function Navbar() {
               Mulai Custom →
             </Button>
           </div>
-          {/* Tombol menu mobile */}
-          <button
-            type="button"
-            className="rounded-control border-2 border-ink bg-surface px-3 py-1.5 text-sm font-semibold lg:hidden"
-            aria-expanded={open}
-            aria-controls="menu-mobile"
-            onClick={() => setOpen((value) => !value)}
-          >
-            {open ? "Tutup" : "Menu"}
-          </button>
+          {/* Tombol hamburger (mobile) */}
+          <HamburgerButton open={open} onClick={() => setOpen((value) => !value)} controls="menu-mobile" className="lg:hidden" />
         </div>
       </nav>
 
@@ -60,13 +63,13 @@ export function Navbar() {
         <ul id="menu-mobile" className="flex flex-col gap-1 border-t-2 border-ink bg-surface px-4 py-3 lg:hidden">
           {LINKS.map((link) => (
             <li key={link.href}>
-              <a href={link.href} className="block rounded-control px-3 py-2 font-medium hover:bg-subtle" onClick={() => setOpen(false)}>
+              <a href={link.href} className="block rounded-control px-3 py-3 text-base font-medium hover:bg-subtle" onClick={() => setOpen(false)}>
                 {link.label}
               </a>
             </li>
           ))}
           <li>
-            <Button href="/editor" className="mt-2 w-full">
+            <Button href="/editor" size="lg" className="mt-2 w-full">
               Mulai Custom →
             </Button>
           </li>

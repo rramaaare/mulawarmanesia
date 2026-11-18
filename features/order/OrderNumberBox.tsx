@@ -58,14 +58,14 @@ export function OrderNumberBox({ code, token, title, total, amountPaid }: OrderN
   }
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-4 rounded-card border-2 border-ink bg-accent-subtle px-4 py-3">
+    <div className="flex flex-col gap-3 rounded-card border-2 border-ink bg-accent-subtle p-3.5 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-4 sm:px-4 sm:py-3">
       <div>
         <p className="text-xs text-ink-soft">Nomor pesanan</p>
-        <p className="text-2xl font-medium tracking-tight md:text-3xl">{code}</p>
+        <p className="text-[28px] font-medium tracking-tight md:text-3xl">{code}</p>
       </div>
-      <div className="flex gap-3">
-        <Button variant="secondary" size="sm" onClick={copyCode}>{copied ? "Tersalin ✓" : "Salin"}</Button>
-        <Button variant="secondary" size="sm" onClick={downloadReceipt}>Unduh bukti</Button>
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <Button variant="secondary" size="sm" onClick={copyCode} className="h-[49px] sm:h-auto">{copied ? "Tersalin ✓" : "Salin"}</Button>
+        <Button variant="secondary" size="sm" onClick={downloadReceipt} className="h-[49px] sm:h-auto">Unduh bukti</Button>
       </div>
     </div>
   );

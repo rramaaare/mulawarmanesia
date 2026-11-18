@@ -203,10 +203,10 @@ export function PaymentApp({ initialOrder, token, initialTicket, serverNow, noti
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-10 md:px-8">
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-4 py-5 md:gap-6 md:px-8 md:py-10">
       <div>
-        <h1 className="text-4xl font-medium md:text-5xl">Pembayaran</h1>
-        <p className="mt-2 text-ink-soft">Pesanan {order.code} · dibuat {formatDateTimeWita(order.createdAt)}</p>
+        <h1 className="text-[28px] font-medium md:text-5xl">Pembayaran</h1>
+        <p className="mt-2 text-base text-ink-soft">Pesanan {order.code} · dibuat {formatDateTimeWita(order.createdAt)}</p>
       </div>
 
       {loadError && !expired && <Alert tone="danger" title="Halaman pembayaran gagal dibuka">[!] Halaman pembayaran gagal dibuka. Coba lagi atau pilih metode lain.</Alert>}
@@ -225,17 +225,17 @@ export function PaymentApp({ initialOrder, token, initialTicket, serverNow, noti
             {polling && <span role="status" className="mt-1 block font-semibold text-ink">Memeriksa pembayaran…</span>}
           </Alert>
 
-          <div className="grid items-start gap-6 lg:grid-cols-[1fr_400px]">
-            <div className="flex min-w-0 flex-col gap-6">
+          <div className="grid items-start gap-4 md:gap-6 lg:grid-cols-[1fr_400px]">
+            <div className="flex min-w-0 flex-col gap-4 md:gap-6">
               {/* Hitung mundur */}
               <Card tone="butter">
                 <p className="text-sm">Sisa waktu pembayaran</p>
-                <p className="mt-1 text-6xl font-medium tracking-tight tabular-nums md:text-7xl" aria-live="off">{formatCountdown(expiresAt - now)}</p>
+                <p className="mt-1 text-4xl font-medium tracking-tight tabular-nums md:text-7xl" aria-live="off">{formatCountdown(expiresAt - now)}</p>
               </Card>
 
               {/* Metode pembayaran */}
               <Card>
-                <h2 className="mb-4 text-2xl font-medium">Metode pembayaran</h2>
+                <h2 className="mb-4 text-xl font-semibold md:text-2xl md:font-medium">Metode pembayaran</h2>
                 <div className="flex flex-col gap-3" role="radiogroup" aria-label="Metode pembayaran">
                   {METHODS.map((item) => (
                     <ChoiceCard
@@ -254,7 +254,7 @@ export function PaymentApp({ initialOrder, token, initialTicket, serverNow, noti
 
               {/* Kode pembayaran: QR (QRIS), nomor (VA), atau pilihan aplikasi (e-wallet) */}
               <Card>
-                <h2 className="mb-5 text-2xl font-medium">Bayar dengan {methodInfo.title}</h2>
+                <h2 className="mb-5 text-xl font-semibold md:text-2xl md:font-medium">Bayar dengan {methodInfo.title}</h2>
                 {switching || !ticket ? (
                   <p className="text-sm text-ink-muted" role="status">{loadError ? "Kode pembayaran belum tersedia." : "Membuat kode pembayaran…"}</p>
                 ) : (
@@ -318,7 +318,7 @@ export function PaymentApp({ initialOrder, token, initialTicket, serverNow, noti
 
             {/* Ringkasan */}
             <Card className="flex flex-col gap-4 lg:sticky lg:top-24">
-              <h2 className="text-xl font-medium">Ringkasan</h2>
+              <h2 className="text-xl font-semibold md:font-medium">Ringkasan</h2>
               <dl className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-3 text-sm">
                 <dt className="text-ink-muted">Nomor pesanan</dt>
                 <dd className="text-right">{order.code}</dd>

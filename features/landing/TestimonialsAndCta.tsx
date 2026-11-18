@@ -18,17 +18,17 @@ export function Testimonials() {
     <section>
       <div className="mx-auto flex max-w-7xl flex-col gap-8 px-4 py-14 md:px-8 md:py-16">
         <SectionTitle title="Kata mereka" />
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-3 md:gap-6">
           {QUOTES.map((quote) => (
-            <Card key={quote.text} className="flex flex-col justify-between gap-6">
-              <blockquote className="text-sm leading-relaxed">“{quote.text}”</blockquote>
+            <Card key={quote.text} shadow="sm" className="flex flex-col justify-between gap-4 !p-4 md:gap-6 md:!p-6">
+              <blockquote className="text-base leading-relaxed md:text-sm">“{quote.text}”</blockquote>
               <div className="flex items-center gap-3">
-                <span className={`flex h-9 w-9 items-center justify-center rounded-full border-2 border-ink text-xs font-semibold ${quote.tone}`} aria-hidden>
+                <span className={`flex h-10 w-10 items-center justify-center rounded-full border-2 border-ink text-xs font-semibold ${quote.tone}`} aria-hidden>
                   {quote.initial}
                 </span>
                 <div>
-                  <p className="text-xs font-semibold">{quote.who}</p>
-                  <p className="text-[11px] text-ink-muted">Contoh testimoni · {quote.note}</p>
+                  <p className="text-sm font-semibold md:text-xs">{quote.who}</p>
+                  <p className="text-xs text-ink-muted">Contoh testimoni · {quote.note}</p>
                 </div>
               </div>
             </Card>
@@ -43,14 +43,14 @@ export function CtaSection() {
   return (
     <section>
       <div className="mx-auto max-w-7xl px-4 pb-16 md:px-8 md:pb-20">
-        <div className="flex flex-wrap items-center justify-between gap-6 rounded-panel border-2 border-ink bg-accent p-8 text-white shadow-hard-lg md:p-12">
+        <div className="flex flex-wrap items-center justify-between gap-6 rounded-panel border-2 border-ink bg-accent p-6 text-white shadow-hard-lg md:p-12">
           <div className="flex max-w-xl flex-col gap-2">
-            <h2 className="text-3xl font-medium md:text-4xl">Siap bikin seragammu?</h2>
-            <p className="text-sm">Coba editor sekarang. Gratis, tanpa login, dan draf tersimpan otomatis.</p>
+            <h2 className="text-[28px] font-medium md:text-4xl">Siap bikin seragammu?</h2>
+            <p className="text-base md:text-sm">Coba editor sekarang. Gratis, tanpa login, dan draf tersimpan otomatis.</p>
           </div>
-          <div className="flex flex-wrap gap-3">
-            <Button href="/editor" variant="dark">Mulai Custom →</Button>
-            <Button href="https://wa.me/6281255550199?text=Halo%20MULAWARMANESIA%2C%20saya%20mau%20tanya%20soal%20seragam" variant="secondary">Tanya via WhatsApp</Button>
+          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+            <Button href="/editor" variant="dark" size="lg" className="w-full sm:w-auto">Mulai Custom →</Button>
+            <Button href="https://wa.me/6281255550199?text=Halo%20MULAWARMANESIA%2C%20saya%20mau%20tanya%20soal%20seragam" variant="secondary" size="lg" className="w-full sm:w-auto">Tanya via WhatsApp</Button>
           </div>
         </div>
       </div>

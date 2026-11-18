@@ -17,10 +17,10 @@ function clamp(value: number): number {
 
 export function QtyStepper({ label, value, onChange }: QtyStepperProps) {
   const buttonClass =
-    "flex h-8 w-8 items-center justify-center rounded-control border-2 border-ink bg-surface text-base font-bold hover:bg-subtle";
+    "flex h-9 w-9 items-center justify-center rounded-control border-2 border-ink bg-surface text-base font-bold hover:bg-subtle md:h-8 md:w-8";
   return (
-    <div className="flex items-center justify-between gap-3 rounded-card border-2 border-ink bg-surface px-3 py-1.5">
-      <span className="w-12 text-sm font-semibold">{label}</span>
+    <div className="flex h-[60px] items-center justify-between gap-3 rounded-card border-2 border-ink bg-surface px-3 md:h-auto md:py-1.5">
+      <span className="w-12 text-xl font-semibold md:text-sm">{label}</span>
       <div className="flex items-center gap-2">
         <button type="button" aria-label={`Kurangi ${label}`} className={buttonClass} onClick={() => onChange(clamp(value - 1))}>
           −
@@ -28,7 +28,7 @@ export function QtyStepper({ label, value, onChange }: QtyStepperProps) {
         <input
           aria-label={`Jumlah ${label}`}
           inputMode="numeric"
-          className="w-12 rounded-control border-2 border-ink px-1 py-1 text-center text-sm font-semibold"
+          className="w-12 rounded-control border-2 border-ink px-1 py-1 text-center text-base font-semibold md:text-sm"
           value={value}
           onChange={(event) => onChange(clamp(Number(event.target.value.replace(/\D/g, ""))))}
         />

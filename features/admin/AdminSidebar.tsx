@@ -7,7 +7,8 @@
  */
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
+import { HamburgerButton } from "@/components/ui/HamburgerButton";
 import { Logo } from "@/components/ui/Logo";
 import { cn } from "@/lib/cn";
 import { LogoutButton } from "./LogoutButton";
@@ -122,6 +123,7 @@ interface AdminSidebarProps {
 
 export function AdminSidebar({ role, name, email, counts }: AdminSidebarProps) {
   const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false); // menu mobile terbuka?
   // Di server selalu "tidak diperkecil" agar render server dan browser sama saat hidrasi
   const collapsed = useSyncExternalStore(subscribe, readCollapsed, () => false);
   // Di server nilainya -1 (belum diketahui) supaya angka tidak berkedip sebelum browser membaca penyimpanan
@@ -129,6 +131,14 @@ export function AdminSidebar({ role, name, email, counts }: AdminSidebarProps) {
     active: useSyncExternalStore(subscribeSeen, () => readSeen("active"), () => -1),
     production: useSyncExternalStore(subscribeSeen, () => readSeen("production"), () => -1),
   };
+
+  // Esc menutup menu mobile
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const onKey = (event: KeyboardEvent) => event.key === "Escape" && setMobileOpen(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [mobileOpen]);
 
   // Bila halaman menu sedang dibuka, atau jumlahnya turun di bawah yang tercatat, anggap semuanya sudah dilihat
   useEffect(() => {
@@ -153,8 +163,9 @@ export function AdminSidebar({ role, name, email, counts }: AdminSidebarProps) {
         aria-current={active ? "page" : undefined}
         aria-label={item.label}
         title={collapsed ? item.label : undefined}
+        onClick={() => setMobileOpen(false)}
         className={cn(
-          "relative flex items-center gap-3 whitespace-nowrap rounded-control px-3 py-2.5 text-sm font-medium transition-all",
+          "relative flex items-center gap-3 whitespace-nowrap rounded-control px-3 py-3 text-base font-medium transition-all lg:py-2.5 lg:text-sm",
           collapsed && "lg:justify-center lg:px-0",
           active ? "bg-ink text-white shadow-[3px_3px_0_0_#c12822]" : "text-ink hover:bg-subtle",
         )}
@@ -179,15 +190,19 @@ export function AdminSidebar({ role, name, email, counts }: AdminSidebarProps) {
   return (
     <aside
       className={cn(
-        "flex shrink-0 flex-col gap-4 border-b-2 border-ink bg-surface p-4 transition-[width] duration-200 print:hidden",
+        "sticky top-0 z-40 flex shrink-0 flex-col gap-3 border-b-2 border-ink bg-surface px-4 py-3 transition-[width] duration-200 print:hidden max-lg:max-h-dvh max-lg:overflow-y-auto",
         "lg:sticky lg:top-0 lg:z-20 lg:h-screen lg:gap-6 lg:border-b-0 lg:border-r-2 lg:py-6",
         collapsed ? "lg:w-[84px] lg:px-3" : "lg:w-[248px]",
       )}
     >
       {/* Atas: logo + label peran */}
-      <div className={cn("flex flex-col gap-1.5", collapsed && "lg:items-center")}>
-        <Logo compact={collapsed} />
-        <p className={cn("text-[10px] font-semibold uppercase tracking-widest text-accent", collapsed && "lg:hidden")}>{role === "SUPERADMIN" ? "Superadmin" : "Panel admin"}</p>
+      <div className="flex items-center justify-between lg:block">
+        <div className={cn("flex flex-col gap-1.5", collapsed && "lg:items-center")}>
+          <Logo compact={collapsed} />
+          <p className={cn("text-[10px] font-semibold uppercase tracking-widest text-accent max-lg:hidden", collapsed && "lg:hidden")}>{role === "SUPERADMIN" ? "Superadmin" : "Panel admin"}</p>
+        </div>
+        {/* Hamburger: hanya mobile */}
+        <HamburgerButton open={mobileOpen} onClick={() => setMobileOpen((value) => !value)} controls="menu-admin" className="lg:hidden" />
       </div>
 
       {/* Tombol perbesar/perkecil: menempel di tepi kanan sidebar */}
@@ -202,11 +217,11 @@ export function AdminSidebar({ role, name, email, counts }: AdminSidebarProps) {
         <OverviewIcon name={collapsed ? "expand" : "collapse"} className="h-3.5 w-3.5" />
       </button>
 
-      <nav aria-label="Menu admin" className="flex gap-2 overflow-x-auto lg:flex-1 lg:flex-col lg:gap-1.5 lg:overflow-y-auto lg:overflow-x-visible lg:pr-1">
+      <nav id="menu-admin" aria-label="Menu admin" className={cn("flex-col gap-1.5 lg:flex lg:flex-1 lg:overflow-y-auto lg:overflow-x-visible lg:pr-1", mobileOpen ? "flex" : "hidden")}>
         {renderItem(DASHBOARD_ITEM)}
         {GROUPS.filter((group) => !group.superOnly || role === "SUPERADMIN").map((group) => (
-          <div key={group.title} className="flex gap-2 lg:flex-col lg:gap-1.5">
-            <p className={cn("hidden px-3 pt-4 text-[10px] font-semibold uppercase tracking-widest text-ink-muted lg:block", collapsed && "lg:hidden")}>{group.title}</p>
+          <div key={group.title} className="flex flex-col gap-1.5">
+            <p className={cn("px-3 pt-4 text-[10px] font-semibold uppercase tracking-widest text-ink-muted", collapsed && "lg:hidden")}>{group.title}</p>
             {collapsed && <span className="hidden h-0.5 bg-line lg:mt-2 lg:block" aria-hidden />}
             {group.items.map(renderItem)}
           </div>
@@ -214,7 +229,7 @@ export function AdminSidebar({ role, name, email, counts }: AdminSidebarProps) {
       </nav>
 
       {/* Kartu akun */}
-      <div className={cn("flex items-center gap-3", collapsed && "lg:flex-col")}>
+      <div className={cn("items-center gap-3 border-t-2 border-line pt-3 lg:flex lg:border-0 lg:pt-0", mobileOpen ? "flex" : "hidden", collapsed && "lg:flex-col")}>
         <span title={`${name} (${email})`} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-ink bg-pastel-butter text-sm font-semibold" aria-hidden>
           {name.charAt(0).toUpperCase()}
         </span>

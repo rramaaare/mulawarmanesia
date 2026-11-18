@@ -4,7 +4,7 @@
  * Parameter ?kategori=ID dari kartu katalog menentukan kategori awal.
  */
 import { EditorApp } from "@/features/editor/EditorApp";
-import { Navbar } from "@/components/ui/Navbar";
+import { CheckoutHeader } from "@/components/ui/CheckoutHeader";
 import { getCatalog } from "@/server/services/catalog-service";
 
 export const dynamic = "force-dynamic";
@@ -15,7 +15,8 @@ export default async function EditorPage({ searchParams }: { searchParams: Promi
   const initialCategoryId = kategori && /^\d+$/.test(kategori) ? Number(kategori) : undefined;
   return (
     <>
-      <Navbar />
+      {/* Editor = langkah 1/4 (setelah ini langsung ke Pesanan = 2/4), di mobile maupun desktop */}
+      <CheckoutHeader step={1} />
       <main className="flex-1">
         <EditorApp catalog={catalog} initialCategoryId={initialCategoryId} />
       </main>

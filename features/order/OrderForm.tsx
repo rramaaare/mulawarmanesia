@@ -9,6 +9,7 @@
  *   2) unggah file logo ke server
  *   3) kirim pesanan -> pindah ke halaman Pembayaran
  */
+import { StickyBar } from "@/components/ui/StickyBar";
 import { toast } from "@/lib/toast";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -36,8 +37,8 @@ type ErrorMap = Record<string, string>;
 /** Judul blok bernomor ("1 Ukuran & jumlah"). */
 function BlockTitle({ number, title }: { number: number; title: string }) {
   return (
-    <h2 className="mb-3 flex items-center gap-2.5 text-lg font-medium">
-      <span className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-ink bg-accent text-xs text-white">{number}</span>
+    <h2 className="mb-3 flex items-center gap-2.5 text-xl font-semibold md:text-lg md:font-medium">
+      <span className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-ink bg-accent text-sm text-white md:h-7 md:w-7 md:text-xs">{number}</span>
       {title}
     </h2>
   );
@@ -213,10 +214,10 @@ export function OrderForm({ catalog }: { catalog: Catalog }) {
   const totalTone = totalPcs >= MIN_ORDER_PCS ? "text-success" : "text-danger";
 
   return (
-    <div className="mx-auto grid w-full max-w-6xl gap-6 px-4 py-8 md:px-8 lg:grid-cols-[1fr_340px]">
+    <div className="mx-auto grid w-full max-w-6xl gap-4 px-4 py-5 pb-24 md:gap-6 md:px-8 md:py-8 lg:grid-cols-[1fr_340px] lg:pb-8">
       <div className="flex flex-col gap-6">
         <div>
-          <h1 className="text-4xl font-medium md:text-5xl">Pesanan</h1>
+          <h1 className="text-[28px] font-medium md:text-5xl">Pesanan</h1>
           <p className="text-ink-soft">Isi ukuran, data pemesan, pengiriman, dan pembayaran. Semua di satu halaman.</p>
         </div>
 
@@ -278,7 +279,7 @@ export function OrderForm({ catalog }: { catalog: Catalog }) {
               <div className="flex flex-col gap-2" id="names">
                 {sizeSequence.length === 0 && <p className="text-xs text-ink-muted">Isi jumlah per ukuran dulu, lalu baris nama akan muncul.</p>}
                 {sizeSequence.map((size, index) => (
-                  <div key={index} className="grid grid-cols-[2rem_1fr_3.5rem] items-center gap-2">
+                  <div key={index} className="grid grid-cols-[1.5rem_1fr_3rem] items-center gap-2 sm:grid-cols-[2rem_1fr_3.5rem]">
                     <span className="text-xs text-ink-muted">{index + 1}</span>
                     <TextInput
                       aria-label={`Nama orang ke-${index + 1}`}
@@ -379,6 +380,8 @@ export function OrderForm({ catalog }: { catalog: Catalog }) {
         submitting={submitting}
         onSubmit={handleSubmit}
       />
+      {/* Mobile: bilah bawah 75px (Total + Bayar) */}
+      <StickyBar label="Total" value={formatRupiah(price.total)} action={<Button onClick={handleSubmit} disabled={submitting} className="h-[49px] px-5">{submitting ? "Memproses…" : "Bayar →"}</Button>} />
       <SizeGuideModal open={showGuide} onClose={() => setShowGuide(false)} />
     </div>
   );

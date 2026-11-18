@@ -120,7 +120,7 @@ export function StatusChanger({ code, current }: { code: string; current: Status
 
       <Modal open={confirming} title="Mulai produksi?" onClose={() => setConfirming(false)}>
         <p className="mb-5 text-sm text-ink-soft">Setelah status menjadi Produksi, desain dikunci dan tidak bisa direvisi.</p>
-        <div className="flex justify-end gap-2">
+        <div className="modal-actions flex justify-end gap-2">
           <Button variant="secondary" onClick={() => setConfirming(false)}>Batal</Button>
           <Button onClick={() => void submit("produksi")}>Ya, mulai produksi</Button>
         </div>

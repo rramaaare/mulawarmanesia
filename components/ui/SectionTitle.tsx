@@ -27,9 +27,9 @@ export function SectionTitle({ kicker, title, description, action }: SectionTitl
   return (
     <div className="flex flex-col gap-3">
       {kicker && <p className="text-xs font-semibold uppercase tracking-widest text-accent">{kicker}</p>}
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      <div className="flex flex-col gap-4 md:flex-row md:flex-wrap md:items-center md:justify-between">
         {/* Dengan kicker, lebar judul dibatasi agar terpecah dua baris seperti di desain */}
-        <h2 className={`flex items-center gap-3 text-3xl font-medium leading-tight tracking-tight md:text-4xl ${kicker ? "max-w-[440px]" : ""}`}>
+        <h2 className={`flex items-center gap-3 text-[28px] font-medium leading-tight tracking-tight md:text-4xl ${kicker ? "max-w-[440px]" : ""}`}>
           {!kicker && <ArrowIcon />}
           {title}
         </h2>

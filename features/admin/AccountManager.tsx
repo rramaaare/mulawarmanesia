@@ -132,7 +132,7 @@ export function AccountManager({ accounts, selfEmail }: { accounts: AdminAccount
         <Field label="Kata sandi baru" error={resetError} hint="Minimal 8 karakter.">
           {(props) => <PasswordInput {...props} autoComplete="new-password" error={resetError} value={newPassword} onChange={(event) => setNewPassword(event.target.value)} />}
         </Field>
-        <div className="mt-4 flex justify-end gap-2">
+        <div className="mt-4 modal-actions flex justify-end gap-2">
           <Button variant="secondary" onClick={() => setResetTarget(null)}>Batal</Button>
           <Button onClick={submitReset}>Simpan</Button>
         </div>

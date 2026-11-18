@@ -51,17 +51,17 @@ export default async function OrderSuccessPage({
       <CheckoutHeader step={4} />
       <main className="flex-1 px-4 py-6 md:py-8">
         {paid && <ClearDraft />}
-        <Card className="mx-auto flex max-w-[640px] flex-col gap-5 !p-6 shadow-hard-lg md:!p-7">
+        <Card className="mx-auto flex max-w-[640px] flex-col gap-4 !p-5 shadow-hard-lg md:gap-5 md:!p-7">
           {paid ? (
             <>
-              <span className="flex h-12 w-12 items-center justify-center rounded-control border-2 border-ink bg-pastel-mint shadow-hard-sm" aria-hidden>
+              <span className="flex h-16 w-16 items-center justify-center rounded-card border-2 border-ink bg-pastel-mint shadow-hard-sm md:h-12 md:w-12 md:rounded-control" aria-hidden>
                 <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="#111111" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="m5 12 5 5 9-10" />
                 </svg>
               </span>
               <div>
-                <h1 className="text-3xl font-medium md:text-4xl">Pesanan berhasil</h1>
-                <p className="mt-2 text-sm text-ink-soft">
+                <h1 className="text-[28px] font-medium md:text-4xl">Pesanan berhasil</h1>
+                <p className="mt-2 text-base text-ink-soft md:text-sm">
                   Pembayaran sudah kami terima. Simpan nomor pesananmu di bawah untuk melacak status produksi.
                 </p>
               </div>
@@ -75,7 +75,7 @@ export default async function OrderSuccessPage({
               />
 
               <div>
-                <h2 className="mb-3 text-base font-medium">Yang terjadi selanjutnya</h2>
+                <h2 className="mb-3 text-xl font-semibold md:text-base md:font-medium">Yang terjadi selanjutnya</h2>
                 <ol className="flex flex-col">
                   {steps.map((step, index) => {
                     const done = index < current;
@@ -97,8 +97,8 @@ export default async function OrderSuccessPage({
                           {index < steps.length - 1 && <span className={cn("w-0.5 flex-1", done ? "bg-accent" : "bg-line")} />}
                         </div>
                         <div className="pb-4">
-                          <p className={cn("text-sm font-semibold", !done && !active && "text-ink-muted")}>{step.title}</p>
-                          <p className="text-xs text-ink-muted">{step.text}</p>
+                          <p className={cn("text-base font-semibold md:text-sm", !done && !active && "text-ink-muted")}>{step.title}</p>
+                          <p className="text-sm text-ink-muted md:text-xs">{step.text}</p>
                         </div>
                       </li>
                     );
@@ -106,9 +106,9 @@ export default async function OrderSuccessPage({
                 </ol>
               </div>
 
-              <div className="flex flex-wrap gap-3">
-                <Button href={`/status/${order.code}?token=${token}`}>Lacak pesanan →</Button>
-                <Button href="/" variant="secondary">Kembali ke beranda</Button>
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <Button href={`/status/${order.code}?token=${token}`} size="lg" className="w-full sm:w-auto">Lacak pesanan →</Button>
+                <Button href="/" variant="secondary" size="lg" className="w-full sm:w-auto">Kembali ke beranda</Button>
               </div>
               <p className="text-xs text-ink-muted">Simpan nomor pesanan. Kamu memerlukannya bersama nomor WhatsApp untuk melacak.</p>
             </>

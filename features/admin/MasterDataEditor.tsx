@@ -203,7 +203,7 @@ export function MasterDataEditor({ data }: { data: MasterData }) {
 
       {/* ===== Harga dasar ===== */}
       {tab === "Harga dasar" && (
-        <div className="grid items-start gap-6 xl:grid-cols-2">
+        <div className="grid grid-cols-1 items-start gap-6 xl:grid-cols-2">
           <div className="flex min-w-0 flex-col gap-6 xl:sticky xl:top-6">
             <Card className="!p-5">
               <h2 className="text-xl font-medium">Harga dasar kategori</h2>
@@ -223,8 +223,8 @@ export function MasterDataEditor({ data }: { data: MasterData }) {
           <Card className="!p-5">
             <h2 className="text-xl font-medium">Harga jadi per pcs</h2>
             <p className="mb-3 mt-0.5 text-xs text-ink-muted">Harga dasar + tambahan bahan. Dipakai untuk estimasi di editor dan dihitung ulang di server saat checkout.</p>
-            <div className="overflow-hidden rounded-card border-2 border-ink">
-              <table className="w-full text-left text-sm">
+            <div className="overflow-x-auto rounded-card border-2 border-ink">
+              <table className="w-full min-w-[420px] text-left text-sm">
                 <thead>
                   <tr className="bg-ink text-xs text-white">
                     <th className="px-4 py-3 font-medium">Kategori</th>
@@ -329,7 +329,7 @@ export function MasterDataEditor({ data }: { data: MasterData }) {
             <span className="font-mono text-xs text-ink-muted">{newColor.hex.toUpperCase()}</span>
           </label>
         </div>
-        <div className="mt-5 flex justify-end gap-2">
+        <div className="mt-5 modal-actions flex justify-end gap-2">
           <Button variant="secondary" onClick={() => setAdding(false)}>Batal</Button>
           <Button onClick={addColor}>Tambah</Button>
         </div>

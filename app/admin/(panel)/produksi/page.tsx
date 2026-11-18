@@ -28,12 +28,12 @@ export default async function ProductionPage({ searchParams }: { searchParams: P
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-medium">Produksi</h1>
+          <h1 className="text-[28px] font-medium md:text-4xl">Produksi</h1>
           <p className="mt-1 text-sm text-ink-soft">{rows.length} pesanan dalam antrean kerja workshop</p>
         </div>
         {/* Cari + filter tahap (checkbox) */}
-        <div className="flex flex-wrap items-center gap-3">
-          <form role="search" className="relative flex">
+        <div className="flex w-full flex-wrap items-center gap-3 sm:w-auto">
+          <form role="search" className="relative flex w-full sm:w-auto">
             <OverviewIcon name="search" className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-muted" />
             {selected.length > 0 && <input type="hidden" name="status" value={selected.join(",")} />}
             <input
@@ -41,7 +41,7 @@ export default async function ProductionPage({ searchParams }: { searchParams: P
               defaultValue={q}
               placeholder="Cari nomor pesanan atau nama"
               aria-label="Cari pesanan produksi"
-              className="w-72 rounded-control border-2 border-ink bg-surface py-2.5 pl-10 pr-4 text-sm placeholder:text-ink-muted focus:outline-none"
+              className="w-full rounded-control sm:w-72 border-2 border-ink bg-surface py-2.5 pl-10 pr-4 text-sm placeholder:text-ink-muted focus:outline-none"
             />
           </form>
           <StatusFilter

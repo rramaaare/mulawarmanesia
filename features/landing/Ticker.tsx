@@ -11,7 +11,7 @@ const MESSAGES = [
 
 export function Ticker() {
   const row = MESSAGES.map((message) => (
-    <span key={message} className="mx-8 whitespace-nowrap text-[10px] font-medium tracking-wide">
+    <span key={message} className="mx-8 whitespace-nowrap text-xs font-medium tracking-wide md:text-[10px]">
       {message} <span aria-hidden className="ml-8">→</span>
     </span>
   ));

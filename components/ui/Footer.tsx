@@ -52,10 +52,10 @@ export function Footer({ catalog }: { catalog: Catalog }) {
         <div className="flex flex-col gap-10 md:flex-row md:justify-between">
           <div className="flex max-w-[260px] flex-col gap-3">
             <Logo inverse />
-            <p className="text-[11px] leading-relaxed text-disabled">Konveksi PDH dan VEST custom. Workshop di Samarinda, kirim ke seluruh Indonesia.</p>
+            <p className="text-sm leading-relaxed text-disabled md:text-[11px]">Konveksi PDH dan VEST custom. Workshop di Samarinda, kirim ke seluruh Indonesia.</p>
           </div>
 
-          <div className="flex flex-wrap gap-x-10 gap-y-8 text-[11px]">
+          <div className="grid grid-cols-2 gap-x-6 gap-y-8 text-sm md:flex md:flex-wrap md:gap-x-10 md:text-[11px]">
             <div className="flex flex-col gap-3">
               <p className={COLUMN_TITLE}>Produk</p>
               <ul className="flex flex-col gap-3 text-disabled">
@@ -72,7 +72,7 @@ export function Footer({ catalog }: { catalog: Catalog }) {
                 ))}
               </ul>
             </div>
-            <div className="flex flex-col gap-3">
+            <div className="col-span-2 flex flex-col gap-3 md:col-span-1">
               <p className={COLUMN_TITLE}>Kontak</p>
               <ul className="flex flex-col gap-3 text-disabled">
                 <li>WA 0812 5555 0199</li>
@@ -93,7 +93,7 @@ export function Footer({ catalog }: { catalog: Catalog }) {
         </p>
 
         {/* Baris bawah */}
-        <div className="mt-12 flex flex-wrap items-center justify-between gap-2 text-[10px] text-disabled">
+        <div className="mt-12 flex flex-wrap items-center justify-between gap-2 text-xs text-disabled md:text-[10px]">
           <span>© 2026 MULAWARMANESIA</span>
           <span>Kebijakan Privasi · Syarat Produksi &amp; Revisi</span>
         </div>

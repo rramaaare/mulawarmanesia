@@ -11,6 +11,7 @@ import { Garment } from "@/components/Garment";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Modal } from "@/components/ui/Modal";
+import { StickyBar } from "@/components/ui/StickyBar";
 import { cn } from "@/lib/cn";
 import { formatRupiah } from "@/lib/format";
 import type { Catalog } from "@/server/services/catalog-service";
@@ -109,11 +110,11 @@ export function EditorApp({ catalog, initialCategoryId }: EditorAppProps) {
   }
 
   return (
-    <div className="mx-auto grid w-full max-w-7xl gap-6 px-4 py-6 pb-32 md:px-8 lg:grid-cols-[340px_1fr_300px] lg:pb-6">
+    <div className="mx-auto grid w-full max-w-7xl gap-4 px-4 py-4 pb-24 md:gap-6 md:px-8 md:py-6 lg:grid-cols-[340px_1fr_300px] lg:pb-6">
       {/* ===== Panel alat kiri ===== */}
       <section aria-label="Alat desain" className="order-2 min-w-0 lg:order-1">
         <Card className="flex flex-col gap-5">
-          <div className="grid grid-cols-4 gap-1" role="tablist" aria-label="Alat">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:gap-1" role="tablist" aria-label="Alat">
             {TABS.map((item) => (
               <button
                 key={item}
@@ -122,7 +123,7 @@ export function EditorApp({ catalog, initialCategoryId }: EditorAppProps) {
                 aria-selected={tab === item}
                 onClick={() => setTab(item)}
                 className={cn(
-                  "rounded-control border-2 border-ink px-1 py-2.5 text-sm font-semibold",
+                  "h-[42px] rounded-control border-2 border-ink px-1 text-sm font-semibold",
                   tab === item ? "bg-accent text-white" : "bg-surface hover:bg-subtle",
                 )}
               >
@@ -180,7 +181,7 @@ export function EditorApp({ catalog, initialCategoryId }: EditorAppProps) {
 
       {/* ===== Pratinjau tengah ===== */}
       <section aria-label="Pratinjau desain" className="order-1 min-w-0 lg:order-2">
-        <Card tone="white" className="flex flex-col gap-4 lg:sticky lg:top-24">
+        <Card tone="white" className="flex flex-col gap-3 !p-3 md:gap-4 md:!p-5 lg:sticky lg:top-24">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex gap-1" role="group" aria-label="Sisi">
               {(["front", "back"] as const).map((item) => (
@@ -189,17 +190,17 @@ export function EditorApp({ catalog, initialCategoryId }: EditorAppProps) {
                   type="button"
                   aria-pressed={side === item}
                   onClick={() => setSide(item)}
-                  className={cn("rounded-control border-2 border-ink px-3 py-1.5 text-sm font-semibold", side === item ? "bg-ink text-white" : "bg-surface")}
+                  className={cn("h-10 rounded-control border-2 border-ink px-3 text-sm font-semibold md:h-auto md:py-1.5", side === item ? "bg-ink text-white" : "bg-surface")}
                 >
                   {item === "front" ? "Depan" : "Belakang"}
                 </button>
               ))}
             </div>
             <div className="flex items-center gap-1">
-              <Button variant="secondary" size="sm" onClick={undo} disabled={!canUndo} aria-label="Undo">↶ Undo</Button>
-              <Button variant="secondary" size="sm" onClick={redo} disabled={!canRedo} aria-label="Redo">Redo ↷</Button>
+              <Button variant="secondary" size="sm" onClick={undo} disabled={!canUndo} aria-label="Undo" className="h-10 md:h-auto"><span aria-hidden>↶</span><span className="hidden md:inline">Undo</span></Button>
+              <Button variant="secondary" size="sm" onClick={redo} disabled={!canRedo} aria-label="Redo" className="h-10 md:h-auto"><span className="hidden md:inline">Redo</span><span aria-hidden>↷</span></Button>
               {/* Zoom: − [persen] +. Mengklik angka mengembalikan ke 100%. */}
-              <div className="ml-1 flex items-center gap-1" role="group" aria-label="Zoom pratinjau">
+              <div className="ml-1 hidden items-center gap-1 md:flex" role="group" aria-label="Zoom pratinjau">
                 <Button variant="secondary" size="sm" onClick={() => stepZoom(-1)} disabled={zoom <= ZOOM_STEPS[0]} aria-label="Perkecil">−</Button>
                 <button type="button" onClick={() => setZoom(100)} title="Kembalikan ke 100%" aria-live="polite" className="min-w-12 rounded-control px-1 py-1 text-center text-sm font-semibold tabular-nums hover:bg-subtle">
                   {zoom}%
@@ -210,7 +211,14 @@ export function EditorApp({ catalog, initialCategoryId }: EditorAppProps) {
           </div>
           {/* Latar netral terang agar warna kain tampil jujur. Ukuran kotak TETAP; saat zoom hanya baju yang
               membesar/mengecil, dan bila lebih besar dari kotak, kotak bisa digulir. */}
-          <div className="flex h-[440px] overflow-auto rounded-card border-2 border-ink bg-subtle p-4 md:h-[470px]">
+          <div className="relative">
+          {/* Zoom versi mobile: melayang di pojok kanan-bawah pratinjau */}
+          <div className="absolute bottom-2 right-2 z-10 flex items-center gap-1 rounded-control border-2 border-ink bg-surface p-1 md:hidden" role="group" aria-label="Zoom pratinjau">
+            <button type="button" onClick={() => stepZoom(-1)} disabled={zoom <= ZOOM_STEPS[0]} aria-label="Perkecil" className="h-8 w-8 rounded-control text-base font-semibold disabled:opacity-40">−</button>
+            <button type="button" onClick={() => setZoom(100)} aria-live="polite" className="min-w-10 text-center text-xs font-semibold tabular-nums">{zoom}%</button>
+            <button type="button" onClick={() => stepZoom(1)} disabled={zoom >= ZOOM_STEPS[ZOOM_STEPS.length - 1]} aria-label="Perbesar" className="h-8 w-8 rounded-control text-base font-semibold disabled:opacity-40">+</button>
+          </div>
+          <div className="flex h-[350px] overflow-auto rounded-control border-2 border-ink bg-subtle p-3 md:h-[470px] md:rounded-card md:p-4">
             <Garment
               product={design.product}
               colors={hexColors}
@@ -223,13 +231,14 @@ export function EditorApp({ catalog, initialCategoryId }: EditorAppProps) {
               style={{ width: `calc(min(340px, 100%) * ${zoom / 100})`, maxWidth: "none" }}
             />
           </div>
+          </div>
         </Card>
       </section>
 
       {/* ===== Ringkasan harga kanan (di mobile menempel di bawah layar) ===== */}
       <aside
         aria-label="Ringkasan harga"
-        className="order-3 fixed inset-x-0 bottom-0 z-30 border-t-2 border-ink bg-page p-4 lg:sticky lg:top-24 lg:self-start lg:border-0 lg:bg-transparent lg:p-0"
+        className="order-3 hidden lg:sticky lg:top-24 lg:block lg:self-start"
       >
         <Card tone="pink" className="flex flex-col gap-3 !p-4">
           <p className="hidden text-xs font-semibold uppercase tracking-widest lg:block">Ringkasan</p>
@@ -245,10 +254,13 @@ export function EditorApp({ catalog, initialCategoryId }: EditorAppProps) {
         </Card>
       </aside>
 
+      {/* Mobile: bilah bawah 75px (Estimasi / pcs + Lanjut) */}
+      <StickyBar label="Estimasi / pcs" value={formatRupiah(unitPrice)} action={<Button onClick={goToOrder} className="h-[49px] px-5">Lanjut →</Button>} />
+
       {/* ===== Konfirmasi ganti kategori (V04) ===== */}
       <Modal open={pendingCategory !== null} title="Ganti kategori?" onClose={() => setPendingCategory(null)}>
         <p className="mb-5 text-sm text-ink-soft">Ganti kategori akan mengatur ulang warna dan posisi logo. Lanjutkan?</p>
-        <div className="flex justify-end gap-2">
+        <div className="modal-actions flex justify-end gap-2">
           <Button variant="secondary" onClick={() => setPendingCategory(null)}>Batal</Button>
           <Button
             onClick={() => {

@@ -4,6 +4,7 @@
  * Status Aktif, Kategori Terlaris, PDH vs VEST, dan Metode & Skema Bayar. Filter rentang waktu di kanan
  * atas mengubah alamat halaman; berganti tab tidak memuat ulang karena semua datanya sudah dikirim server.
  */
+import Link from "next/link";
 import { useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { cn } from "@/lib/cn";
@@ -38,7 +39,21 @@ export function StatusTabsCard({ data, range }: { data: DashboardData; range: st
           <h3 className="text-lg font-medium">Statistik Pesanan</h3>
           <p className="text-xs text-ink-muted">Pesanan aktif saat ini; kategori, produk, dan pembayaran mengikuti rentang waktu</p>
         </div>
-        <FilterSelect param="range" value={range} options={RANGE_OPTIONS} label="Rentang:" />
+        <div className="hidden md:block"><FilterSelect param="range" value={range} options={RANGE_OPTIONS} label="Rentang:" /></div>
+        {/* Mobile: tiga tombol segmen (tinggi 40) */}
+        <div className="flex w-full gap-1 md:hidden" role="group" aria-label="Rentang waktu">
+          {RANGE_OPTIONS.map((option) => (
+            <Link
+              key={option.value}
+              href={`?range=${option.value}`}
+              scroll={false}
+              aria-current={range === option.value ? "true" : undefined}
+              className={cn("flex h-10 flex-1 items-center justify-center rounded-control border-2 border-ink px-1 text-xs font-semibold", range === option.value ? "bg-ink text-white" : "bg-surface")}
+            >
+              {option.label.replace(" terakhir", "")}
+            </Link>
+          ))}
+        </div>
       </div>
 
       {/* Tab (bisa digulir ke samping di layar kecil) */}

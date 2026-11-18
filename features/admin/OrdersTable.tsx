@@ -24,7 +24,35 @@ const HEADERS: [string, boolean][] = [
 
 export function OrdersTable({ rows, emptyText = "Tidak ada pesanan yang cocok." }: { rows: OrderRow[]; emptyText?: string }) {
   return (
-    <div className="overflow-x-auto">
+    <>
+      {/* Mobile: daftar kartu (tiap kartu = tautan ke detail pesanan) */}
+      <ul className="flex flex-col gap-3 md:hidden">
+        {rows.length === 0 && <li className="rounded-card border-2 border-line bg-surface px-4 py-8 text-center text-sm text-ink-muted">{emptyText}</li>}
+        {rows.map((row) => (
+          <li key={row.code}>
+            <Link
+              href={`/admin/pesanan/${row.code}`}
+              className="flex flex-col gap-2 rounded-card border-2 border-ink bg-surface p-3.5 shadow-hard-sm transition-all active:translate-x-[3px] active:translate-y-[3px] active:shadow-none"
+            >
+              <span className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1.5">
+                <span className="whitespace-nowrap font-semibold">{row.code}</span>
+                <StatusPill status={row.status} />
+              </span>
+              <span className="text-sm text-ink-soft">
+                {row.customer}
+                {row.organization && <> · {row.organization}</>}
+              </span>
+              <span className="flex items-end justify-between gap-2 text-xs text-ink-muted">
+                <span>{row.product} · {row.pcs} pcs · {formatDateShort(row.createdAt)}</span>
+                <span className="text-sm font-semibold text-ink">{formatRupiah(row.total)}</span>
+              </span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+
+      {/* Tablet/desktop: tabel */}
+      <div className="hidden overflow-x-auto md:block">
       <div className="min-w-[780px] overflow-hidden rounded-card border-2 border-ink">
         <table className="w-full border-collapse text-left text-sm">
           <thead>
@@ -68,6 +96,7 @@ export function OrdersTable({ rows, emptyText = "Tidak ada pesanan yang cocok." 
           </tbody>
         </table>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

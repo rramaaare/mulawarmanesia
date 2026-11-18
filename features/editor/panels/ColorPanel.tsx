@@ -48,7 +48,7 @@ export function ColorPanel({ catalog, product, colors, onChangeColor }: ColorPan
         <p className="mb-2 text-sm font-semibold">
           Warna {part}: <span className="text-accent">{colors[part]}</span>
         </p>
-        <ul className="grid grid-cols-4 gap-3">
+        <ul className="grid grid-cols-5 gap-1.5 sm:gap-2 lg:grid-cols-4 lg:gap-3">
           {catalog.colors.map((color) => {
             const selected = colors[part] === color.name;
             return (
@@ -60,7 +60,7 @@ export function ColorPanel({ catalog, product, colors, onChangeColor }: ColorPan
                   aria-pressed={selected}
                   onClick={() => onChangeColor(part, color.name)}
                   className={cn(
-                    "relative h-12 w-full rounded-control border-2 border-ink",
+                    "relative h-11 w-full rounded-control border-2 border-ink lg:h-12",
                     selected && "outline outline-[3px] outline-offset-2 outline-accent",
                     !color.inStock && "cursor-not-allowed opacity-40",
                   )}
@@ -68,7 +68,7 @@ export function ColorPanel({ catalog, product, colors, onChangeColor }: ColorPan
                 >
                   {!color.inStock && <span className="absolute inset-0 flex items-center justify-center text-xl font-bold text-ink" aria-hidden>✕</span>}
                 </button>
-                <span className="mt-1 block truncate text-center text-[11px] text-ink-soft">{color.name}</span>
+                <span className="mt-1 block truncate text-center text-xs text-ink-soft">{color.name}</span>
               </li>
             );
           })}

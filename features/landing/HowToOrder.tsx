@@ -21,12 +21,14 @@ export function HowToOrder() {
         <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {STEPS.map((step, index) => (
             <li key={step.title}>
-              <Card shadow="sm" className="flex h-full flex-col gap-3 !p-4">
-                <span className="flex h-7 w-9 items-center justify-center rounded-control border-2 border-ink bg-accent text-xs font-semibold text-white">
+              <Card shadow="sm" className="flex h-full flex-row items-start gap-3.5 !p-4 lg:flex-col lg:gap-3">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-control border-2 border-ink bg-accent text-base font-semibold text-white lg:h-7 lg:w-9 lg:text-xs">
                   {String(index + 1).padStart(2, "0")}
                 </span>
-                <h3 className="text-sm font-semibold">{step.title}</h3>
-                <p className="text-xs leading-relaxed text-ink-soft">{step.text}</p>
+                <div className="flex min-w-0 flex-col gap-1 lg:gap-3">
+                  <h3 className="text-xl font-semibold lg:text-sm">{step.title}</h3>
+                  <p className="text-sm leading-relaxed text-ink-soft lg:text-xs">{step.text}</p>
+                </div>
               </Card>
             </li>
           ))}

@@ -47,8 +47,9 @@ export function TrackingForm() {
 
   return (
     <Card className="mx-auto flex w-full max-w-lg flex-col gap-5">
-      <h1 className="text-3xl font-semibold">Lacak pesanan</h1>
-      <p className="text-sm text-ink-soft">Masukkan nomor pesanan dan nomor WhatsApp yang kamu pakai saat checkout.</p>
+      <p className="text-xs font-semibold uppercase tracking-widest text-accent">Lacak pesanan</p>
+      <h1 className="text-[28px] font-medium leading-tight md:text-4xl">Sampai mana seragammu?</h1>
+      <p className="text-base text-ink-soft md:text-sm">Masukkan nomor pesanan dan nomor WhatsApp yang kamu pakai saat checkout.</p>
       {message && <Alert tone="danger">{message}</Alert>}
       <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
         <Field label="Nomor pesanan" required error={errors.code} hint="Contoh: MLW-2611-0042">

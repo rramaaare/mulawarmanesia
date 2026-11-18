@@ -29,7 +29,7 @@ function Row({ label, value, strong }: { label: string; value: string; strong?: 
   return (
     <div className={strong ? "flex justify-between text-base font-semibold" : "flex justify-between text-sm text-ink-soft"}>
       <span>{label}</span>
-      <span className={strong ? "text-accent" : ""}>{value}</span>
+      <span className={strong ? "text-[28px] leading-none text-accent md:text-base" : ""}>{value}</span>
     </div>
   );
 }
@@ -38,12 +38,12 @@ export function OrderSummary({ product, title, subtitle, hexColors, images, text
   return (
     // self-start: kartu hanya setinggi isinya (tidak ditarik memenuhi tinggi baris), lalu menempel (sticky) saat di-scroll
     <Card className="flex flex-col gap-3 self-start !p-4 lg:sticky lg:top-24">
-      <div className="rounded-card border-2 border-ink bg-subtle p-2">
-        <Garment product={product} colors={hexColors} images={images} texts={texts} className="mx-auto h-32 w-auto" />
+      <div className="flex h-[220px] items-center justify-center rounded-control border-2 border-ink bg-subtle p-2 md:block md:h-auto md:rounded-card">
+        <Garment product={product} colors={hexColors} images={images} texts={texts} className="mx-auto h-full w-auto md:h-32" />
       </div>
       <div>
-        <p className="font-semibold">{title}</p>
-        <p className="text-xs text-ink-muted">{subtitle}</p>
+        <p className="text-xl font-semibold md:text-base">{title}</p>
+        <p className="text-sm text-ink-muted md:text-xs">{subtitle}</p>
       </div>
       <div className="flex flex-col gap-1.5 border-t-2 border-ink pt-3">
         <Row label={`${title} × ${price.totalPcs} pcs`} value={formatRupiah(price.subtotal - price.decorationTotal)} />

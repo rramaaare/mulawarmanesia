@@ -41,7 +41,7 @@ export default async function StatusPage({
       <Navbar />
       <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-4 py-10 md:px-8">
         <div className="flex flex-wrap items-center gap-3">
-          <h1 className="text-3xl font-semibold">{order.code}</h1>
+          <h1 className="text-[28px] font-medium md:text-3xl md:font-semibold">{order.code}</h1>
           <Tag tone={order.status === "perlu_revisi" ? "warning" : order.status === "selesai" ? "success" : "accent"}>{STATUS_LABEL[order.status]}</Tag>
         </div>
 
@@ -65,7 +65,7 @@ export default async function StatusPage({
             <Card className="flex flex-col gap-4">
               <h2 className="text-xl font-semibold">Ringkasan</h2>
               <OrderDesignPreview order={order} catalog={catalog} />
-              <dl className="grid grid-cols-2 gap-y-1 text-sm">
+              <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm [&>dd]:text-right">
                 <dt className="text-ink-muted">Produk</dt><dd>{order.item.product} {order.item.categoryName}</dd>
                 <dt className="text-ink-muted">Bahan</dt><dd>{order.item.materialName}</dd>
                 <dt className="text-ink-muted">Ukuran</dt><dd>{order.item.sizes.map((row) => `${row.size}:${row.qty}`).join(" · ")}</dd>
@@ -75,7 +75,11 @@ export default async function StatusPage({
                 <dt className="font-semibold">Total</dt><dd className="font-semibold text-accent">{formatRupiah(order.total)}</dd>
               </dl>
             </Card>
-            <Button href={waLink} variant="secondary" className="w-full">Chat admin via WhatsApp →</Button>
+            <Card tone="butter" shadow="sm" className="flex flex-col gap-3 !p-4">
+              <h2 className="text-xl font-semibold">Butuh bantuan?</h2>
+              <p className="text-sm text-ink-soft">Tanyakan status atau perubahan pesanan langsung ke admin.</p>
+              <Button href={waLink} variant="dark" size="lg" className="w-full">Chat admin via WhatsApp →</Button>
+            </Card>
           </div>
         </div>
       </main>
