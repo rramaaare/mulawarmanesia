@@ -3,11 +3,11 @@
  * Panel Warna: pilih bagian garmen lalu pilih warna kain dari palet stok, atau motif (mis. batik).
  * Warna yang habis tampil abu bersilang dan tidak bisa diklik (PRD §8.3, §10.2).
  */
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 import type { Catalog } from "@/server/services/catalog-service";
-import { MOTIFS } from "@/lib/domain/constants";
-import { partsFor, type ProductType } from "../garment-data";
+import { MOTIFS, findMotif } from "@/lib/domain/constants";
+import { defaultColorsFor, partsFor, type ProductType } from "../garment-data";
 
 interface ColorPanelProps {
   catalog: Catalog;
@@ -24,6 +24,18 @@ export function ColorPanel({ catalog, product, model, colors, onChangeColor }: C
   const [activePart, setActivePart] = useState(parts[0]);
   // Jika produk berganti dan bagian aktif tidak ada lagi, pakai bagian pertama
   const part = parts.includes(activePart) ? activePart : parts[0];
+  /** Warna polos terakhir yang dipilih per bagian (dipakai saat motif dilepas lewat "None"). */
+  const lastPlain = useRef<Record<string, string>>({});
+  const hasMotif = Boolean(findMotif(colors[part]));
+
+  /** Melepas motif: kembali ke warna polos terakhir, warna bawaan model, warna Badan, atau warna stok pertama. */
+  function removeMotif() {
+    if (!hasMotif) return;
+    const isPlain = (name: string | undefined): name is string => Boolean(name) && !findMotif(name);
+    const candidates = [lastPlain.current[part], defaultColorsFor(product, model)[part], colors["Badan"]];
+    const plain = candidates.find(isPlain) ?? catalog.colors.find((color) => color.inStock)?.name;
+    if (plain) onChangeColor(part, plain);
+  }
 
   return (
     <div className="flex flex-col gap-5">
@@ -62,7 +74,10 @@ export function ColorPanel({ catalog, product, model, colors, onChangeColor }: C
                   disabled={!color.inStock}
                   aria-label={color.inStock ? color.name : `${color.name} (stok habis)`}
                   aria-pressed={selected}
-                  onClick={() => onChangeColor(part, color.name)}
+                  onClick={() => {
+                    lastPlain.current[part] = color.name;
+                    onChangeColor(part, color.name);
+                  }}
                   className={cn(
                     "relative h-11 w-full rounded-control border-2 border-ink lg:h-12",
                     selected && "outline outline-[3px] outline-offset-2 outline-accent",
@@ -84,6 +99,23 @@ export function ColorPanel({ catalog, product, model, colors, onChangeColor }: C
       <div>
         <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-ink-muted">Motif</p>
         <ul className="grid grid-cols-3 gap-2">
+          {/* None: lepas motif, bagian kembali ke warna polos */}
+          <li>
+            <button
+              type="button"
+              aria-label="Tanpa motif"
+              aria-pressed={!hasMotif}
+              onClick={removeMotif}
+              className={cn(
+                "relative mx-auto flex h-12 w-12 items-center justify-center overflow-hidden rounded-full border-2 border-ink bg-disabled",
+                !hasMotif && "outline outline-[3px] outline-offset-2 outline-accent",
+              )}
+            >
+              {/* Ikon "tanpa": lingkaran abu-abu dengan garis miring */}
+              <span className="h-[3px] w-[130%] -rotate-45 bg-ink" aria-hidden />
+            </button>
+            <span className="mt-1 block truncate text-center text-xs text-ink-soft">None</span>
+          </li>
           {MOTIFS.map((motif) => {
             const selected = colors[part] === motif.name;
             return (
@@ -104,7 +136,7 @@ export function ColorPanel({ catalog, product, model, colors, onChangeColor }: C
             );
           })}
         </ul>
-        <p className="mt-2 text-xs text-ink-muted">Motif dicetak/dijahit sesuai kain yang tersedia; letak motif di baju asli bisa sedikit berbeda.</p>
+        <p className="mt-2 text-xs text-ink-muted">Motif dicetak/dijahit sesuai kain yang tersedia; letak motif di baju asli bisa sedikit berbeda. Pilih None untuk melepas motif.</p>
       </div>
     </div>
   );
