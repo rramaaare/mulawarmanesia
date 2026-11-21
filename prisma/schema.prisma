@@ -71,6 +71,8 @@ model Category {
   product   Product
   name      String    @db.VarChar(60)
   basePrice Int // harga dasar per pcs (rupiah)
+  /// Nomor model baju dari mockup (PDH "01"-"07", VEST "01"-"06"); satu kategori = satu model.
+  designModel String? @db.VarChar(2)
   items     OrderItem[]
 
   @@unique([product, name])

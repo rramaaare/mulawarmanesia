@@ -19,7 +19,7 @@ afterAll(async () => {
 
 describe("master data", () => {
   it("mengubah harga kategori, menulis audit log, lalu bisa dikembalikan", async () => {
-    const category = await db.category.findFirstOrThrow({ where: { product: "PDH", name: "Organisasi" } });
+    const category = await db.category.findFirstOrThrow({ where: { product: "PDH", name: "Model 01" } });
     const original = category.basePrice;
 
     await changeMasterData(ACTOR, { type: "category", id: category.id, value: original + 5000 });
@@ -49,7 +49,7 @@ describe("master data", () => {
 
 describe("simpan beberapa perubahan sekaligus", () => {
   it("atomik: bila satu perubahan gagal, perubahan lain ikut dibatalkan", async () => {
-    const category = await db.category.findFirstOrThrow({ where: { product: "PDH", name: "Organisasi" } });
+    const category = await db.category.findFirstOrThrow({ where: { product: "PDH", name: "Model 01" } });
     const original = category.basePrice;
     await expect(
       changeMasterData(ACTOR, {

@@ -6,9 +6,9 @@ import { createOrder } from "@/server/services/order-service";
 import { simulateGatewayResult, startPayment } from "@/server/services/payment-service";
 import { changeOrderStatus } from "@/server/services/status-service";
 
-/** Data checkout contoh yang valid: 12 pcs PDH Organisasi diambil di workshop. */
+/** Data checkout contoh yang valid: 12 pcs PDH Model 01 diambil di workshop. */
 async function sampleCheckout(overrides: Record<string, unknown> = {}) {
-  const category = await db.category.findFirstOrThrow({ where: { product: "PDH", name: "Organisasi" } });
+  const category = await db.category.findFirstOrThrow({ where: { product: "PDH", name: "Model 01" } });
   const material = await db.material.findFirstOrThrow({ where: { product: "PDH", name: "American Drill" } });
   return {
     design: {

@@ -8,9 +8,8 @@
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Tag } from "@/components/ui/Tag";
-import { Garment } from "@/components/Garment";
+import Image from "next/image";
 import { ParallaxLayer } from "@/components/ParallaxLayer";
-import { PDH_RED, VEST_BLACK } from "./garment-colors";
 
 /** Tiga angka singkat di bawah tombol. */
 const FACTS = [
@@ -67,14 +66,14 @@ export function HeroSection() {
           {/* L2: kartu PDH (0.5×, miring tipis) */}
           <ParallaxLayer speed={0.5} rotateTo={-2} fromTop mobile className="absolute left-0 top-[6.8%] z-10 w-[85.7%] md:left-[7%] md:top-[12%] md:w-[49%]">
             <Card tone="blue" className="!p-[5%] shadow-hard-lg">
-              <Garment product="PDH" colors={PDH_RED} className="w-full" />
+              <Image src="/landing/pdh-02-depan.webp" alt="Contoh PDH Model 02 hijau-hitam dengan logo di dada" width={600} height={680} priority className="h-auto w-full" />
             </Card>
           </ParallaxLayer>
 
           {/* L3: kartu VEST (0.8×) menutup sudut kanan-bawah kartu PDH */}
           <ParallaxLayer speed={0.8} fromTop className="absolute left-[14.3%] top-[44.4%] z-20 w-[85.7%] md:left-[44%] md:top-[37%] md:w-[49%]">
             <Card tone="butter" className="!p-[5%] shadow-hard-lg">
-              <Garment product="VEST" colors={VEST_BLACK} className="w-full" />
+              <Image src="/landing/vest-01-depan.webp" alt="Contoh VEST Model 01 hijau army dengan bahu krem dan logo" width={600} height={680} priority className="h-auto w-full" />
             </Card>
           </ParallaxLayer>
 

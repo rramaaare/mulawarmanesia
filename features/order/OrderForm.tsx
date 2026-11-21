@@ -24,7 +24,7 @@ import { MIN_ORDER_PCS, SIZES, type Size } from "@/lib/domain/constants";
 import { calculatePrice, countPieces, type SizeQuantities } from "@/lib/domain/pricing";
 import { formatRupiah } from "@/lib/format";
 import { checkoutSchema } from "@/lib/validation/order";
-import { colorsToHex, toGarmentOverlays } from "@/features/editor/design-helpers";
+import { colorsToHex, syncModelWithCategory, toGarmentOverlays } from "@/features/editor/design-helpers";
 import { loadDraft, loadFile, restorePreviews } from "@/features/editor/draft-storage";
 import { POSITIONS } from "@/features/editor/garment-data";
 import type { DesignState } from "@/features/editor/types";
@@ -73,13 +73,13 @@ export function OrderForm({ catalog }: { catalog: Catalog }) {
     (async () => {
       const draft = loadDraft();
       if (draft) {
-        const restored = await restorePreviews(draft);
+        const restored = syncModelWithCategory(await restorePreviews(draft), catalog);
         setDesign(restored);
         setMaterialId(restored.materialId);
       }
       setLoaded(true);
     })();
-  }, []);
+  }, [catalog]); // catalog dari server tidak berubah selama halaman terbuka, jadi efek ini tetap berjalan sekali
 
   /** Daftar ukuran satu per satu (S,S,M,M,...) untuk baris "nama per orang". */
   const sizeSequence = useMemo(
@@ -110,6 +110,7 @@ export function OrderForm({ catalog }: { catalog: Catalog }) {
     return {
       design: {
         product: design?.product ?? "PDH",
+        model: design?.product === "PDH" ? design.model : undefined,
         categoryId: design?.categoryId ?? 0,
         materialId,
         colors: design?.colors ?? {},
@@ -369,6 +370,7 @@ export function OrderForm({ catalog }: { catalog: Catalog }) {
 
       <OrderSummary
         product={design.product}
+        model={design.model}
         title={`${design.product} ${category?.name ?? ""}`}
         subtitle={`${material?.name ?? ""} · ${design.images.length} gambar${design.images[0] ? ` (${POSITIONS[design.images[0].position].label})` : ""}`}
         hexColors={colorsToHex(design.colors, catalog)}

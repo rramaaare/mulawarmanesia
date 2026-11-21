@@ -6,15 +6,14 @@
 import { Card } from "@/components/ui/Card";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { Tag } from "@/components/ui/Tag";
-import { Garment } from "@/components/Garment";
+import Image from "next/image";
 import { ParallaxLayer } from "@/components/ParallaxLayer";
 import { cn } from "@/lib/cn";
-import { PDH_GREEN, PDH_NAVY, VEST_BLACK } from "./garment-colors";
 
 const PROJECTS = [
-  { speed: 1, product: "PDH", label: "PDH Organisasi", title: "Himpunan Mahasiswa Informatika", detail: "120 pcs · bordir dada & punggung", tone: "bg-pastel-blue", colors: PDH_NAVY, drift: undefined },
-  { speed: 1, product: "VEST", label: "VEST Proyek", title: "Tim K3 Proyek Gudang", detail: "60 pcs · strip reflektif · sablon", tone: "bg-pastel-butter", colors: VEST_BLACK, drift: 48 },
-  { speed: 1, product: "PDH", label: "PDH Komunitas", title: "Komunitas Tepian Runners", detail: "45 pcs · sablon punggung", tone: "bg-pastel-mint", colors: PDH_GREEN, drift: undefined },
+  { speed: 1, label: "PDH Model 07", title: "Himpunan Mahasiswa Informatika", detail: "120 pcs · aksen batik parang · bordir dada", tone: "bg-pastel-blue", image: "/landing/pdh-07-parang-depan.webp", alt: "PDH Model 07 putih dengan plaket hitam dan aksen batik parang", drift: undefined },
+  { speed: 1, label: "VEST Model 01", title: "KKN Desa Rimberio", detail: "40 pcs · bordir logo · sablon punggung", tone: "bg-pastel-butter", image: "/landing/vest-01-belakang.webp", alt: "Punggung VEST Model 01 bertuliskan KKN 2026 Desa Rimberio", drift: 48 },
+  { speed: 1, label: "VEST Model 06", title: "Tim K3 Proyek Gudang", detail: "60 pcs · bordir lambang & nama jabatan", tone: "bg-pastel-mint", image: "/landing/vest-06-depan.webp", alt: "VEST Model 06 abu-abu dengan lambang di dada", drift: undefined },
 ] as const;
 
 export function PortfolioSection() {
@@ -27,7 +26,7 @@ export function PortfolioSection() {
             <ParallaxLayer key={project.title} speed={project.speed} driftY={project.drift}>
               <Card className="flex flex-col gap-4 !p-3">
                 <div className={cn("rounded-card border-2 border-ink px-4 py-6", project.tone)}>
-                  <Garment product={project.product} colors={project.colors} className="mx-auto h-48 w-auto" />
+                  <Image src={project.image} alt={project.alt} width={600} height={680} className="mx-auto h-48 w-auto" />
                 </div>
                 <div className="flex flex-col gap-1 px-2 pb-2">
                   <div>

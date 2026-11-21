@@ -7,10 +7,11 @@ import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { Garment } from "@/components/Garment";
+import { toPaints } from "@/lib/domain/paint";
+import { defaultColorsFor } from "@/features/editor/garment-data";
 import { ParallaxLayer } from "@/components/ParallaxLayer";
 import { cn } from "@/lib/cn";
 import type { Catalog } from "@/server/services/catalog-service";
-import { PDH_RED, VEST_BLACK } from "./garment-colors";
 
 /** Latar pastel bergantian untuk kotak ilustrasi tiap kartu. */
 const TONES = ["bg-pastel-blue", "bg-pastel-mint", "bg-pastel-butter", "bg-pastel-peach"];
@@ -25,8 +26,8 @@ export function CategoryStrip({ catalog }: { catalog: Catalog }) {
     <section id="kategori">
       <div className="mx-auto flex max-w-7xl flex-col gap-8 px-4 py-14 md:px-8 md:py-16">
         <SectionTitle
-          title="Kategori desain"
-          description="Setiap kategori adalah template awal: potongan kerah, saku, dan posisi logo sudah diatur. Kamu tinggal mengubah warna dan isinya."
+          title="Model desain"
+          description="Setiap model adalah potongan dasar: kerah, saku, bahu, dan posisi logo sudah diatur. Kamu tinggal mengubah warna atau motif tiap bagian dan isinya."
         />
         {/* Di mobile: overflow-x-auto (swipe). Di desktop: dipotong di tepi konten, digeser paralaks. */}
         {/* Pinggir kiri-kanan memudar (blur) lewat mask, bukan terpotong tajam */}
@@ -44,7 +45,7 @@ export function CategoryStrip({ catalog }: { catalog: Catalog }) {
                     <span className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-ink text-xs" aria-hidden>→</span>
                   </div>
                   <div className={cn("flex w-[128px] items-center justify-center rounded-control md:w-[120px] md:rounded-card border-2 border-ink", TONES[index % TONES.length])}>
-                    <Garment product={category.product} colors={category.product === "PDH" ? PDH_RED : VEST_BLACK} className="h-24 w-auto" />
+                    <Garment product={category.product} model={category.designModel} colors={toPaints(defaultColorsFor(category.product, category.designModel), catalog.colors)} className="h-24 w-auto" />
                   </div>
                 </Card>
               </Link>

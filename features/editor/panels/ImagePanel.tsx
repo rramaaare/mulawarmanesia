@@ -13,10 +13,12 @@ import { MAX_IMAGES, DECORATION_FEE } from "@/lib/domain/constants";
 import { formatRupiah } from "@/lib/format";
 import { saveFile } from "../draft-storage";
 import { validateLogoFile } from "../image-validation";
-import { POSITIONS, POSITION_KEYS, type PositionKey } from "../garment-data";
+import { POSITIONS, positionKeysFor, type PositionKey, type ProductType } from "../garment-data";
 import type { DecorationTechnique, EditorImage } from "../types";
 
 interface ImagePanelProps {
+  /** Produk; menentukan posisi yang tersedia (VEST tanpa lengan). */
+  product: ProductType;
   images: EditorImage[];
   onAdd: (image: EditorImage) => void;
   onChange: (id: string, patch: Partial<EditorImage>) => void;
@@ -25,7 +27,7 @@ interface ImagePanelProps {
   onFocusPosition: (position: PositionKey | null) => void;
 }
 
-export function ImagePanel({ images, onAdd, onChange, onRemove, onFocusPosition }: ImagePanelProps) {
+export function ImagePanel({ product, images, onAdd, onChange, onRemove, onFocusPosition }: ImagePanelProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -45,7 +47,7 @@ export function ImagePanel({ images, onAdd, onChange, onRemove, onFocusPosition 
     await saveFile(id, file);
     // Pilih posisi depan pertama yang belum dipakai
     const used = new Set(images.map((image) => image.position));
-    const position = POSITION_KEYS.find((key) => !used.has(key)) ?? "dada_kiri";
+    const position = positionKeysFor(product).find((key) => !used.has(key)) ?? "dada_kiri";
     onAdd({ id, fileKey: id, fileName: file.name, previewUrl: URL.createObjectURL(file), position, technique: "bordir" });
   }
 
@@ -100,7 +102,7 @@ export function ImagePanel({ images, onAdd, onChange, onRemove, onFocusPosition 
                   onBlur={() => onFocusPosition(null)}
                   onChange={(event) => onChange(image.id, { position: event.target.value as PositionKey })}
                 >
-                  {POSITION_KEYS.map((key) => <option key={key} value={key}>{POSITIONS[key].label}</option>)}
+                  {positionKeysFor(product).map((key) => <option key={key} value={key}>{POSITIONS[key].label}</option>)}
                 </SelectInput>
                 <SelectInput
                   aria-label="Teknik"

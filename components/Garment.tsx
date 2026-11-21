@@ -1,11 +1,24 @@
+"use client";
 /**
- * Komponen Garment: menggambar PDH (kemeja lengan pendek) atau VEST sebagai SVG.
- * Warna tiap bagian = properti `fill` dari objek `colors` (nama bagian -> kode hex),
- * jadi mengubah warna di editor langsung mengubah gambar. Logo dan teks digambar
- * di atasnya pada posisi preset. Dipakai di landing, editor, dan halaman status.
+ * Komponen Garment: menggambar PDH (kemeja lengan panjang, Model 01-07) atau VEST (rompi, Model 01-06)
+ * dari gambar mockup. Gambar tiap model disimpan di /public/mockup/views dan diambil saat dibutuhkan
+ * (sekali per model, lalu disimpan di memori). Isi tiap bagian = warna (hex) atau motif kain,
+ * dikirim lewat `colors` (nama bagian -> cat dari `toPaints`). Logo dan teks digambar di atasnya.
+ * Dipakai di landing, editor, halaman pesanan, status, dan admin.
  */
-import type { CSSProperties } from "react";
-import { POSITIONS, FONTS, type PositionKey, type ProductType } from "@/features/editor/garment-data";
+import { useEffect, useSyncExternalStore, type CSSProperties } from "react";
+import { MOTIFS } from "@/lib/domain/constants";
+import { motifId } from "@/lib/domain/paint";
+
+export { toPaints } from "@/lib/domain/paint";
+import {
+  FONTS,
+  POSITIONS,
+  PRODUCT_POSITIONS,
+  resolveModel,
+  type PositionKey,
+  type ProductType,
+} from "@/features/editor/garment-data";
 
 /** Satu logo yang akan digambar. */
 export interface GarmentImage {
@@ -23,7 +36,9 @@ export interface GarmentText {
 
 interface GarmentProps {
   product: ProductType;
-  /** Nama bagian -> kode warna hex, mis. { Badan: "#1F2A44" }. */
+  /** Nomor model ("01"-"07"). Kosong = Model 01. */
+  model?: string | null;
+  /** Nama bagian -> cat (kode hex atau motif dari `toPaints`), mis. { Badan: "#1F2A44" }. */
   colors: Record<string, string>;
   side?: "front" | "back";
   images?: GarmentImage[];
@@ -33,97 +48,133 @@ interface GarmentProps {
   className?: string;
   /** Gaya tambahan, mis. lebar tetap untuk zoom. */
   style?: CSSProperties;
+  /** Bila diisi, teks di gambar bisa diklik (indeks = urutan di `texts`). Dipakai editor untuk mengubah teks. */
+  onTextClick?: (index: number) => void;
 }
 
 /** Warna cadangan jika bagian belum punya warna. */
 const FALLBACK = "#CCCCCC";
-const STROKE = { stroke: "#111111", strokeWidth: 2.5, strokeLinejoin: "round" as const };
 
-/** Posisi kancing di tengah plaket kemeja (sumbu Y). */
-const BUTTON_ROWS = [90, 120, 150, 180, 210, 240, 270];
+/** Area baju di gambar asli (x y lebar tinggi), rasionya sama dengan kanvas 300 x 340. */
+const VIEWBOX: Record<ProductType, string> = { PDH: "71 130 668 757", VEST: "50 300 2735 3100" };
 
-/** Dua lengan pendek + list (manset) hitam di ujungnya; dipakai tampak depan dan belakang. */
-function ShortSleeves({ c }: { c: (part: string) => string }) {
-  return (
-    <>
-      <path d="M95 40 L26 78 L8 124 L62 142 L92 98 Z" fill={c("Lengan")} />
-      <path d="M205 40 L274 78 L292 124 L238 142 L208 98 Z" fill={c("Lengan")} />
-      <path d="M8 124 L62 142 L57 160 L3 142 Z" fill={c("List lengan")} />
-      <path d="M292 124 L238 142 L243 160 L297 142 Z" fill={c("List lengan")} />
-    </>
-  );
+/** Menggelapkan warna hex (dipakai untuk bagian dalam). Motif dibiarkan apa adanya. */
+function shade(hex: string, amount: number): string {
+  const match = /^#?([0-9a-f]{6})$/i.exec(hex);
+  if (!match) return hex;
+  const value = parseInt(match[1], 16);
+  const channel = (shift: number) => Math.round(((value >> shift) & 255) * (1 - amount));
+  return `rgb(${channel(16)}, ${channel(8)}, ${channel(0)})`;
 }
 
-/** Gambar PDH tampak depan: kemeja kerah, plaket berkancing, dua saku dengan tutup. */
-function PdhFront({ c }: { c: (part: string) => string }) {
-  return (
-    <g {...STROKE}>
-      <ShortSleeves c={c} />
-      <path d="M95 40 L125 30 L175 30 L205 40 L208 100 L214 318 L86 318 L92 100 Z" fill={c("Badan")} />
-      <rect x="143" y="58" width="14" height="260" fill={c("Plaket")} />
-      {/* Saku: badan saku + tutup saku di atasnya */}
-      <rect x="102" y="118" width="38" height="42" fill={c("Badan")} />
-      <rect x="160" y="118" width="38" height="42" fill={c("Badan")} />
-      <rect x="102" y="118" width="38" height="15" fill={c("Tutup saku")} />
-      <rect x="160" y="118" width="38" height="15" fill={c("Tutup saku")} />
-      {BUTTON_ROWS.map((y) => (
-        <circle key={y} cx="150" cy={y} r="2.8" fill="#FFFFFF" strokeWidth="1.5" />
-      ))}
-      <path d="M125 30 L150 62 L133 82 L104 50 Z" fill={c("Kerah")} />
-      <path d="M175 30 L150 62 L167 82 L196 50 Z" fill={c("Kerah")} />
-    </g>
-  );
+// ---- Pemuatan gambar mockup: diambil sekali per tampilan, dibagikan ke semua Garment ----
+const viewCache = new Map<string, string>();
+const loading = new Set<string>();
+const listeners = new Set<() => void>();
+function subscribe(listener: () => void) {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
+}
+function loadView(key: string) {
+  if (viewCache.has(key) || loading.has(key)) return;
+  loading.add(key);
+  fetch(`/mockup/views/${key}.svg`)
+    .then((response) => (response.ok ? response.text() : ""))
+    .catch(() => "")
+    .then((markup) => {
+      viewCache.set(key, markup);
+      loading.delete(key);
+      listeners.forEach((listener) => listener());
+    });
+}
+function useMockupView(key: string): string {
+  const markup = useSyncExternalStore(subscribe, () => viewCache.get(key) ?? "", () => "");
+  useEffect(() => loadView(key), [key]);
+  return markup;
 }
 
-/** Gambar PDH tampak belakang: tanpa plaket/saku, kerah belakang rendah. */
-function PdhBack({ c }: { c: (part: string) => string }) {
-  return (
-    <g {...STROKE}>
-      <ShortSleeves c={c} />
-      <path d="M95 40 L125 30 L175 30 L205 40 L208 100 L214 318 L86 318 L92 100 Z" fill={c("Badan")} />
-      <path d="M125 30 Q150 48 175 30 L172 42 Q150 58 128 42 Z" fill={c("Kerah")} />
-    </g>
-  );
+/** Variabel CSS yang dibaca gambar mockup, dengan bagian cadangan untuk desain lama/bagian yang tidak ada. */
+function paintVariables(product: ProductType, colors: Record<string, string>): CSSProperties {
+  const badan = colors["Badan"] ?? colors["Badan bawah"] ?? FALLBACK;
+  if (product === "VEST") {
+    const bahu = colors["Bahu"] ?? badan;
+    return {
+      "--vest-badan": badan,
+      "--vest-bahu": bahu,
+      "--vest-saku": colors["Saku"] ?? badan,
+      "--vest-aksen": colors["Aksen"] ?? shade(badan, 0.35),
+      "--vest-atas": colors["Badan atas"] ?? bahu,
+      "--vest-bawah": colors["Badan bawah"] ?? badan,
+    } as CSSProperties;
+  }
+  const lengan = colors["Lengan"] ?? badan;
+  const bahu = colors["Bahu"] ?? badan;
+  return {
+    "--pdh-badan": badan,
+    "--pdh-lengan": lengan,
+    "--pdh-manset": colors["List lengan"] ?? lengan,
+    "--pdh-kerah": colors["Kerah"] ?? badan,
+    "--pdh-plaket": colors["Plaket"] ?? badan,
+    "--pdh-saku": colors["Saku"] ?? colors["Tutup saku"] ?? badan,
+    "--pdh-bahu": bahu,
+    "--pdh-samping": colors["Panel samping"] ?? badan,
+    "--pdh-strip": colors["Strip"] ?? badan,
+    "--pdh-epolet": colors["Epolet"] ?? bahu,
+    "--pdh-dalam": shade(badan, 0.3),
+  } as CSSProperties;
 }
 
-/** Gambar VEST: leher V lebar, strip reflektif vertikal + horizontal, dua saku, ritsleting. */
-function Vest({ c, side }: { c: (part: string) => string; side: "front" | "back" }) {
-  return (
-    <g {...STROKE}>
-      <path
-        d={side === "front"
-          ? "M84 30 L124 30 L150 82 L176 30 L216 30 L226 110 L218 322 L82 322 L74 110 Z"
-          : "M84 30 Q150 54 216 30 L226 110 L218 322 L82 322 L74 110 Z"}
-        fill={c("Badan")}
-      />
-      {/* Strip reflektif: dua vertikal di sisi, dua horizontal di bawah */}
-      <rect x="96" y="30" width="16" height="292" fill={c("Strip reflektif")} />
-      <rect x="188" y="30" width="16" height="292" fill={c("Strip reflektif")} />
-      <rect x="82" y="196" width="136" height="14" fill={c("Strip reflektif")} />
-      <rect x="82" y="224" width="136" height="14" fill={c("Strip reflektif")} />
-      {side === "front" && (
-        <>
-          <rect x="100" y="262" width="42" height="44" fill={c("Saku")} />
-          <rect x="158" y="262" width="42" height="44" fill={c("Saku")} />
-          <line x1="150" y1="82" x2="150" y2="322" stroke={c("Ritsleting")} strokeWidth="4" />
-        </>
-      )}
-    </g>
-  );
-}
-
-export function Garment({ product, colors, side = "front", images = [], texts = [], highlight, className, style }: GarmentProps) {
-  /** Mengambil warna bagian; jika kosong pakai abu-abu. */
-  const c = (part: string) => colors[part] ?? FALLBACK;
+export function Garment({ product, model, colors, side = "front", images = [], texts = [], highlight, className, style, onTextClick }: GarmentProps) {
+  const activeModel = resolveModel(product, model);
+  const markup = useMockupView(`${product.toLowerCase()}-${activeModel}-${side}`);
   const visible = <T extends { position: PositionKey }>(items: T[]) => items.filter((item) => POSITIONS[item.position].side === side);
+  /** Indeks asli teks (sebelum disaring per sisi), supaya klik menunjuk teks yang benar. */
+  const visibleTexts = texts.map((text, index) => ({ ...text, index })).filter((text) => POSITIONS[text.position].side === side);
+  /** Titik dan ukuran area cetak sesuai gambar produk. */
+  const spotOf = (position: PositionKey) => ({ ...POSITIONS[position], ...PRODUCT_POSITIONS[product][position] });
+  /** Motif yang dipakai desain ini (pola SVG-nya perlu didefinisikan). */
+  const usedMotifs = MOTIFS.filter((motif) => Object.values(colors).includes(`url(#${motifId(motif.slug)})`));
 
   return (
-    <svg viewBox="0 0 300 340" className={className} style={style} role="img" aria-label={`${product} tampak ${side === "front" ? "depan" : "belakang"}`}>
-      {product === "PDH" ? (side === "front" ? <PdhFront c={c} /> : <PdhBack c={c} />) : <Vest c={c} side={side} />}
+    <svg
+      viewBox="0 0 300 340"
+      className={className}
+      style={{ userSelect: "none", ...style }}
+      role="img"
+      aria-label={`${product} Model ${activeModel} tampak ${side === "front" ? "depan" : "belakang"}`}
+    >
+      {usedMotifs.length > 0 && (
+        <defs>
+          {usedMotifs.map((motif) => (
+            // Motif menutupi tiap bagian (seperti background-size: cover) tanpa terdistorsi
+            <pattern
+              key={motif.slug}
+              id={motifId(motif.slug)}
+              patternUnits="objectBoundingBox"
+              width="1"
+              height="1"
+              viewBox={`0 0 ${motif.width} ${motif.height}`}
+              preserveAspectRatio="xMidYMid slice"
+            >
+              <image href={motif.src} width={motif.width} height={motif.height} />
+            </pattern>
+          ))}
+        </defs>
+      )}
+      <svg
+        x="0"
+        y="0"
+        width="300"
+        height="340"
+        viewBox={VIEWBOX[product]}
+        style={paintVariables(product, colors)}
+        // Markup berasal dari file mockup milik sendiri (bukan input pengguna), jadi aman disisipkan.
+        dangerouslySetInnerHTML={{ __html: markup }}
+      />
 
       {/* Logo */}
       {visible(images).map((image, index) => {
-        const spot = POSITIONS[image.position];
+        const spot = spotOf(image.position);
         return (
           <image
             key={`${image.position}-${index}`}
@@ -138,12 +189,12 @@ export function Garment({ product, colors, side = "front", images = [], texts = 
       })}
 
       {/* Teks */}
-      {visible(texts).map((text, index) => {
-        const spot = POSITIONS[text.position];
+      {visibleTexts.map((text) => {
+        const spot = spotOf(text.position);
         const font = FONTS.find((item) => item.name === text.fontName) ?? FONTS[0];
         return (
           <text
-            key={`${text.position}-${index}`}
+            key={`${text.position}-${text.index}`}
             x={spot.x}
             y={spot.y + 4}
             textAnchor="middle"
@@ -151,7 +202,14 @@ export function Garment({ product, colors, side = "front", images = [], texts = 
             fontWeight={font.weight}
             fontSize={Math.max(8, Math.min(18, 150 / Math.max(text.content.length, 6)))}
             fill={text.colorHex}
+            // Garis tepi tipis agar teks tetap terbaca walau warnanya sama dengan kain
+            stroke="rgba(17, 17, 17, 0.45)"
+            strokeWidth={0.6}
+            paintOrder="stroke"
+            onClick={onTextClick ? () => onTextClick(text.index) : undefined}
+            style={onTextClick ? { cursor: "pointer" } : undefined}
           >
+            {onTextClick && <title>Klik untuk mengubah teks</title>}
             {text.content}
           </text>
         );
@@ -160,10 +218,10 @@ export function Garment({ product, colors, side = "front", images = [], texts = 
       {/* Area cetak aman (garis putus-putus) untuk posisi yang sedang dipilih */}
       {highlight && POSITIONS[highlight].side === side && (
         <rect
-          x={POSITIONS[highlight].x - POSITIONS[highlight].size / 2 - 3}
-          y={POSITIONS[highlight].y - POSITIONS[highlight].size / 2 - 3}
-          width={POSITIONS[highlight].size + 6}
-          height={POSITIONS[highlight].size + 6}
+          x={spotOf(highlight).x - spotOf(highlight).size / 2 - 3}
+          y={spotOf(highlight).y - spotOf(highlight).size / 2 - 3}
+          width={spotOf(highlight).size + 6}
+          height={spotOf(highlight).size + 6}
           fill="none"
           stroke="#C12822"
           strokeWidth="2"

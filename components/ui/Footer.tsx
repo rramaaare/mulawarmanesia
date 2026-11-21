@@ -11,10 +11,10 @@ import { Logo } from "./Logo";
 
 /** Produk yang ditautkan di footer: [jenis produk, nama kategori]. */
 const PRODUCT_LINKS = [
-  ["PDH", "Organisasi"],
-  ["PDH", "Instansi"],
-  ["VEST", "Proyek"],
-  ["VEST", "Event"],
+  ["PDH", "Model 01"],
+  ["PDH", "Model 07"],
+  ["VEST", "Model 01"],
+  ["VEST", "Model 04"],
 ] as const;
 
 /** Tautan layanan. */

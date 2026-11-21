@@ -15,14 +15,25 @@ interface ModalProps {
 
 export function Modal({ open, title, onClose, children }: ModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
+  // onClose disimpan di ref: pemanggil biasanya mengirim fungsi baru setiap render, dan bila
+  // fungsi itu jadi dependensi effect, fokus akan direbut ke dialog pada setiap ketikan.
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  });
 
+  // Fokus ke dialog HANYA saat dialog baru dibuka.
+  useEffect(() => {
+    if (open) dialogRef.current?.focus();
+  }, [open]);
+
+  // Tombol Esc menutup dialog.
   useEffect(() => {
     if (!open) return;
-    dialogRef.current?.focus();
-    const onKey = (event: KeyboardEvent) => event.key === "Escape" && onClose();
+    const onKey = (event: KeyboardEvent) => event.key === "Escape" && onCloseRef.current();
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
+  }, [open]);
 
   if (!open) return null;
   return (

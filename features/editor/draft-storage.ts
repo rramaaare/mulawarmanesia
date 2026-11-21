@@ -68,6 +68,7 @@ export function saveDraft(design: DesignState): void {
 export function loadDraft(): DesignState | null {
   try {
     const text = localStorage.getItem(DRAFT_KEY);
+    // Draf lama (sebelum ada model) diselaraskan oleh syncModelWithCategory saat dibuka
     return text ? (JSON.parse(text) as DesignState) : null;
   } catch {
     return null;

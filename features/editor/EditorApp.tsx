@@ -15,9 +15,9 @@ import { StickyBar } from "@/components/ui/StickyBar";
 import { cn } from "@/lib/cn";
 import { formatRupiah } from "@/lib/format";
 import type { Catalog } from "@/server/services/catalog-service";
-import { colorsToHex, createInitialDesign, estimateUnitPrice, isDesignModified, resetPositions, toGarmentOverlays } from "./design-helpers";
+import { colorsToHex, createInitialDesign, estimateUnitPrice, isDesignModified, resetPositions, syncModelWithCategory, toGarmentOverlays, withModel } from "./design-helpers";
 import { loadDraft, restorePreviews, saveDraft } from "./draft-storage";
-import { DEFAULT_COLORS, POSITIONS, type PositionKey } from "./garment-data";
+import { POSITIONS, defaultColorsFor, resolveModel, type PositionKey } from "./garment-data";
 import { ColorPanel } from "./panels/ColorPanel";
 import { ImagePanel } from "./panels/ImagePanel";
 import { ModelPanel } from "./panels/ModelPanel";
@@ -45,6 +45,7 @@ export function EditorApp({ catalog, initialCategoryId }: EditorAppProps) {
   const [zoom, setZoom] = useState<number>(100); // persen, salah satu dari ZOOM_STEPS
   const [focusPosition, setFocusPosition] = useState<PositionKey | null>(null);
   const [pendingCategory, setPendingCategory] = useState<number | null>(null); // menunggu konfirmasi
+  const [editingTextId, setEditingTextId] = useState<string | null>(null); // teks yang sedang diubah
   const [restored, setRestored] = useState(false);
 
   // 1. Saat pertama dibuka: pulihkan draf terakhir (kecuali datang dari kartu katalog tertentu)
@@ -52,7 +53,7 @@ export function EditorApp({ catalog, initialCategoryId }: EditorAppProps) {
     (async () => {
       const draft = loadDraft();
       if (draft && !initialCategoryId && catalog.categories.some((item) => item.id === draft.categoryId)) {
-        replace(await restorePreviews(draft));
+        replace(syncModelWithCategory(await restorePreviews(draft), catalog));
       }
       setRestored(true);
     })();
@@ -71,15 +72,20 @@ export function EditorApp({ catalog, initialCategoryId }: EditorAppProps) {
       const category = catalog.categories.find((item) => item.id === categoryId);
       if (!category) return;
       const material = catalog.materials.find((item) => item.product === category.product);
-      update((current) => ({
-        ...current,
-        product: category.product,
-        categoryId,
-        materialId: current.product === category.product ? current.materialId : (material?.id ?? current.materialId),
-        colors: { ...DEFAULT_COLORS[category.product] },
-        images: resetPositions(current.images),
-        texts: resetPositions(current.texts),
-      }));
+      update((current) => {
+        // Kategori = model baju
+        const model = resolveModel(category.product, category.designModel);
+        return {
+          ...current,
+          product: category.product,
+          model,
+          categoryId,
+          materialId: current.product === category.product ? current.materialId : (material?.id ?? current.materialId),
+          colors: defaultColorsFor(category.product, model),
+          images: resetPositions(category.product, current.images),
+          texts: resetPositions(category.product, current.texts),
+        };
+      });
     },
     [catalog, update],
   );
@@ -87,6 +93,12 @@ export function EditorApp({ catalog, initialCategoryId }: EditorAppProps) {
   /** Pilih kategori: minta konfirmasi bila pengguna sudah mengubah desain. */
   function selectCategory(categoryId: number) {
     if (categoryId === design.categoryId) return;
+    const category = catalog.categories.find((item) => item.id === categoryId);
+    // Ganti model dalam produk yang sama: warna dan posisi logo/teks dipertahankan, jadi tidak perlu konfirmasi
+    if (category && category.product === design.product) {
+      update((current) => ({ ...withModel(current, resolveModel(category.product, category.designModel)), categoryId }));
+      return;
+    }
     if (isDesignModified(design)) setPendingCategory(categoryId);
     else applyCategory(categoryId);
   }
@@ -136,6 +148,7 @@ export function EditorApp({ catalog, initialCategoryId }: EditorAppProps) {
             <ModelPanel
               catalog={catalog}
               product={design.product}
+              hexColors={hexColors}
               categoryId={design.categoryId}
               materialId={design.materialId}
               onSelectCategory={selectCategory}
@@ -146,12 +159,14 @@ export function EditorApp({ catalog, initialCategoryId }: EditorAppProps) {
             <ColorPanel
               catalog={catalog}
               product={design.product}
+              model={design.model}
               colors={design.colors}
               onChangeColor={(part, colorName) => update((current) => ({ ...current, colors: { ...current.colors, [part]: colorName } }))}
             />
           )}
           {tab === "Gambar" && (
             <ImagePanel
+              product={design.product}
               images={design.images}
               onAdd={(image) => {
                 update((current) => ({ ...current, images: [...current.images, image] }));
@@ -167,13 +182,20 @@ export function EditorApp({ catalog, initialCategoryId }: EditorAppProps) {
           )}
           {tab === "Teks" && (
             <TextPanel
+              product={design.product}
               texts={design.texts}
               onAdd={(text) => {
                 update((current) => ({ ...current, texts: [...current.texts, text] }));
                 setSide(POSITIONS[text.position].side); // teks di punggung tidak terlihat bila pratinjau masih tampak depan
               }}
+              onUpdate={(id, patch) => {
+                update((current) => ({ ...current, texts: current.texts.map((text) => (text.id === id ? { ...text, ...patch } : text)) }));
+                setSide(POSITIONS[patch.position].side);
+              }}
               onRemove={(id) => update((current) => ({ ...current, texts: current.texts.filter((text) => text.id !== id) }))}
               onFocusPosition={setFocusPosition}
+              editingId={editingTextId}
+              onEditingChange={setEditingTextId}
             />
           )}
         </Card>
@@ -221,11 +243,18 @@ export function EditorApp({ catalog, initialCategoryId }: EditorAppProps) {
           <div className="flex h-[350px] overflow-auto rounded-control border-2 border-ink bg-subtle p-3 md:h-[470px] md:rounded-card md:p-4">
             <Garment
               product={design.product}
+              model={design.model}
               colors={hexColors}
               side={side}
               images={overlays.images}
               texts={overlays.texts}
               highlight={focusPosition}
+              onTextClick={(index) => {
+                const text = design.texts[index];
+                if (!text) return;
+                setTab("Teks");
+                setEditingTextId(text.id);
+              }}
               className="m-auto h-auto shrink-0 transition-[width]"
               // Lebar dasar 340 px (atau selebar kotak di layar kecil) dikali persen zoom
               style={{ width: `calc(min(340px, 100%) * ${zoom / 100})`, maxWidth: "none" }}

@@ -12,6 +12,8 @@ import type { ProductType } from "@/features/editor/garment-data";
 
 interface OrderSummaryProps {
   product: ProductType;
+  /** Model PDH ("01"-"07"). */
+  model?: string;
   title: string; // mis. "PDH Organisasi"
   subtitle: string; // mis. "American Drill · 1 bordir dada kiri"
   hexColors: Record<string, string>;
@@ -34,12 +36,12 @@ function Row({ label, value, strong }: { label: string; value: string; strong?: 
   );
 }
 
-export function OrderSummary({ product, title, subtitle, hexColors, images, texts, price, schemeLabel, payNowAmount, submitting, onSubmit }: OrderSummaryProps) {
+export function OrderSummary({ product, model, title, subtitle, hexColors, images, texts, price, schemeLabel, payNowAmount, submitting, onSubmit }: OrderSummaryProps) {
   return (
     // self-start: kartu hanya setinggi isinya (tidak ditarik memenuhi tinggi baris), lalu menempel (sticky) saat di-scroll
     <Card className="flex flex-col gap-3 self-start !p-4 lg:sticky lg:top-24">
       <div className="flex h-[220px] items-center justify-center rounded-control border-2 border-ink bg-subtle p-2 md:block md:h-auto md:rounded-card">
-        <Garment product={product} colors={hexColors} images={images} texts={texts} className="mx-auto h-full w-auto md:h-32" />
+        <Garment product={product} model={model} colors={hexColors} images={images} texts={texts} className="mx-auto h-full w-auto md:h-32" />
       </div>
       <div>
         <p className="text-xl font-semibold md:text-base">{title}</p>

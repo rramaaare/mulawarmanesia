@@ -11,6 +11,7 @@ import { Card } from "@/components/ui/Card";
 import { StatusChanger } from "@/features/admin/StatusChanger";
 import { StatusPill } from "@/features/admin/StatusPill";
 import { OrderDesignPreview, type StoredDesign } from "@/features/status/OrderDesignPreview";
+import { findMotif } from "@/lib/domain/constants";
 import { POSITIONS, type PositionKey } from "@/features/editor/garment-data";
 import { SIZES } from "@/lib/domain/constants";
 import { STATUS_LABEL } from "@/lib/domain/order-status";
@@ -96,7 +97,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
               <ul className="flex flex-wrap gap-2">
                 {Object.entries(design.colors).map(([part, colorName]) => (
                   <li key={part} className="flex items-center gap-2 rounded-full border-2 border-ink bg-surface px-3 py-1 text-xs font-medium">
-                    <span className="h-3.5 w-3.5 rounded-full border-2 border-ink" style={{ backgroundColor: catalog.colors.find((color) => color.name === colorName)?.hex ?? "#ccc" }} />
+                    <span className="h-3.5 w-3.5 rounded-full border-2 border-ink" style={findMotif(colorName) ? { backgroundImage: `url(${findMotif(colorName)?.src})`, backgroundSize: "cover" } : { backgroundColor: catalog.colors.find((color) => color.name === colorName)?.hex ?? "#ccc" }} />
                     {part}: {colorName}
                   </li>
                 ))}

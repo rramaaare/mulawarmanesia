@@ -8,7 +8,7 @@ import { randomBytes } from "node:crypto";
 import { Prisma } from "@/generated/prisma/client";
 import { db } from "@/server/db";
 import { AppError } from "@/server/errors";
-import { SIZES } from "@/lib/domain/constants";
+import { SIZES, findMotif } from "@/lib/domain/constants";
 import { buildOrderCode, periodOf } from "@/lib/domain/order-code";
 import { normalizeWhatsapp } from "@/lib/domain/phone";
 import { calculatePrice, type SizeQuantities } from "@/lib/domain/pricing";
@@ -36,7 +36,8 @@ async function nextOrderCode(tx: Tx, now: Date): Promise<string> {
 
 /** Memastikan semua warna yang dipilih ada di palet dan stoknya tersedia. */
 async function assertColorsAvailable(tx: Tx, colors: Record<string, string>): Promise<void> {
-  const names = Array.from(new Set(Object.values(colors)));
+  // Motif (mis. batik) bukan warna kain stok; namanya sudah dicek terhadap daftar MOTIFS
+  const names = Array.from(new Set(Object.values(colors))).filter((name) => !findMotif(name));
   const found = await tx.fabricColor.findMany({ where: { name: { in: names }, inStock: true } });
   if (found.length !== names.length) {
     throw new AppError("[!] Ada warna yang stoknya habis atau tidak tersedia. Pilih warna lain.", 400);
@@ -122,7 +123,8 @@ export async function createOrder(rawInput: unknown): Promise<CreatedOrder> {
             product: input.design.product,
             categoryId: category.id,
             materialId: material.id,
-            designJson: input.design as unknown as Prisma.InputJsonValue,
+            // Model selalu diambil dari kategori (bukan dipercaya dari browser)
+            designJson: { ...input.design, model: category.designModel ?? undefined } as unknown as Prisma.InputJsonValue,
             bodyColor,
             notes: input.notes || null,
             namePerson: input.namePerPerson,

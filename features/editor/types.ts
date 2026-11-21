@@ -31,6 +31,8 @@ export interface EditorText {
 /** Seluruh keadaan desain. */
 export interface DesignState {
   product: ProductType;
+  /** Model baju dari mockup ("01"-"07"); ditentukan oleh kategori. */
+  model?: string;
   categoryId: number;
   materialId: number;
   colors: Record<string, string>; // nama bagian -> nama warna kain

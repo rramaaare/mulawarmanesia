@@ -20,6 +20,27 @@ export const SIZE_SURCHARGE: Record<Size, number> = {
   XXXL: 15_000,
 };
 
+/** Model baju dari file mockup: PDH (kemeja lengan panjang) dan VEST (rompi). */
+export const PDH_MODELS = ["01", "02", "03", "04", "05", "06", "07"] as const;
+export const VEST_MODELS = ["01", "02", "03", "04", "05", "06"] as const;
+/** Semua nomor model yang mungkin (dipakai validasi). */
+export const DESIGN_MODELS = ["01", "02", "03", "04", "05", "06", "07"] as const;
+
+/**
+ * Motif kain yang bisa dipakai di bagian mana pun selain warna polos.
+ * `name` disimpan di desain seperti nama warna; `width`/`height` = ukuran gambar (piksel).
+ */
+export const MOTIFS = [
+  { name: "Batik Hijau", slug: "batik-hijau", src: "/mockup/motif/batik-hijau.jpg", width: 1000, height: 638 },
+  { name: "Batik Parang", slug: "batik-parang", src: "/mockup/motif/batik-parang.jpg", width: 1000, height: 665 },
+] as const;
+export type Motif = (typeof MOTIFS)[number];
+
+/** Mencari motif dari namanya; undefined bila nama itu warna polos. */
+export function findMotif(name: string | undefined): Motif | undefined {
+  return MOTIFS.find((motif) => motif.name === name);
+}
+
 /** Minimal total pcs dalam satu pesanan. */
 export const MIN_ORDER_PCS = 12;
 

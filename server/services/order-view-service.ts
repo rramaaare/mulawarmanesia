@@ -38,6 +38,8 @@ export interface OrderView {
   item: {
     product: "PDH" | "VEST";
     categoryName: string;
+    /** Model dari kategori (dipakai bila designJson lama belum menyimpan model). */
+    categoryModel: string | null;
     materialName: string;
     designJson: unknown;
     notes: string | null;
@@ -87,6 +89,7 @@ function toOrderView(order: NonNullable<Awaited<ReturnType<typeof findOrderRow>>
     item: {
       product: item.product,
       categoryName: item.category.name,
+      categoryModel: item.category.designModel,
       materialName: item.material.name,
       designJson: item.designJson,
       notes: item.notes,

@@ -9,7 +9,8 @@ import { getSettings } from "./settings-service";
 
 /** Data master yang dikirim ke browser. */
 export interface Catalog {
-  categories: { id: number; product: "PDH" | "VEST"; name: string; basePrice: number }[];
+  /** Satu kategori = satu model baju dari mockup (`designModel` "01"-"07"). */
+  categories: { id: number; product: "PDH" | "VEST"; name: string; basePrice: number; designModel: string | null }[];
   materials: { id: number; product: "PDH" | "VEST"; name: string; surcharge: number }[];
   colors: { name: string; hex: string; inStock: boolean }[];
   cities: { name: string; zone: string; fee: number }[];
@@ -20,7 +21,7 @@ export interface Catalog {
 /** Membaca seluruh data master sekaligus. */
 export async function getCatalog(): Promise<Catalog> {
   const [categories, materials, colors, cities, rates, settings] = await Promise.all([
-    db.category.findMany({ orderBy: { id: "asc" } }),
+    db.category.findMany({ orderBy: [{ product: "asc" }, { id: "asc" }] }),
     db.material.findMany({ orderBy: { id: "asc" } }),
     db.fabricColor.findMany({ orderBy: { id: "asc" } }),
     db.city.findMany({ orderBy: { name: "asc" } }),

@@ -8,17 +8,25 @@ import "dotenv/config";
 import bcrypt from "bcryptjs";
 import { db } from "../server/db";
 
-/** Kategori desain beserta harga dasar (dummy, sesuai PRD §8.6). */
-const CATEGORIES = [
-  { product: "PDH", name: "Organisasi", basePrice: 185_000 },
-  { product: "PDH", name: "Instansi", basePrice: 210_000 },
-  { product: "PDH", name: "Komunitas", basePrice: 175_000 },
-  { product: "PDH", name: "Perusahaan", basePrice: 225_000 },
-  { product: "VEST", name: "Proyek", basePrice: 95_000 },
-  { product: "VEST", name: "Event", basePrice: 110_000 },
-  { product: "VEST", name: "Relawan", basePrice: 90_000 },
-  { product: "VEST", name: "Brand", basePrice: 125_000 },
-] as const;
+/**
+ * Kategori desain beserta harga dasar (dummy). Satu kategori = satu model baju dari mockup:
+ * PDH Model 01-07 (kemeja lengan panjang), VEST Model 01-06 (rompi). Harga bisa diubah di Master data.
+ */
+const CATEGORIES: { product: "PDH" | "VEST"; name: string; basePrice: number; designModel: string }[] = [
+  { product: "PDH", name: "Model 01", basePrice: 175_000, designModel: "01" },
+  { product: "PDH", name: "Model 02", basePrice: 185_000, designModel: "02" },
+  { product: "PDH", name: "Model 03", basePrice: 195_000, designModel: "03" },
+  { product: "PDH", name: "Model 04", basePrice: 195_000, designModel: "04" },
+  { product: "PDH", name: "Model 05", basePrice: 185_000, designModel: "05" },
+  { product: "PDH", name: "Model 06", basePrice: 195_000, designModel: "06" },
+  { product: "PDH", name: "Model 07", basePrice: 225_000, designModel: "07" },
+  { product: "VEST", name: "Model 01", basePrice: 115_000, designModel: "01" },
+  { product: "VEST", name: "Model 02", basePrice: 115_000, designModel: "02" },
+  { product: "VEST", name: "Model 03", basePrice: 125_000, designModel: "03" },
+  { product: "VEST", name: "Model 04", basePrice: 110_000, designModel: "04" },
+  { product: "VEST", name: "Model 05", basePrice: 130_000, designModel: "05" },
+  { product: "VEST", name: "Model 06", basePrice: 120_000, designModel: "06" },
+];
 
 /** Bahan kain dan tambahan harganya. */
 const MATERIALS = [
@@ -73,7 +81,7 @@ async function main(): Promise<void> {
   for (const item of CATEGORIES) {
     await db.category.upsert({
       where: { product_name: { product: item.product, name: item.name } },
-      update: { basePrice: item.basePrice },
+      update: { basePrice: item.basePrice, designModel: item.designModel },
       create: item,
     });
   }

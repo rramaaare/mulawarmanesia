@@ -5,7 +5,7 @@
  * aturan tidak pernah berbeda. Pesan error sesuai PRD §10 dan diawali "[!]".
  */
 import { z } from "zod";
-import { MAX_IMAGES, MIN_ORDER_PCS, SIZES } from "@/lib/domain/constants";
+import { DESIGN_MODELS, MAX_IMAGES, MIN_ORDER_PCS, SIZES } from "@/lib/domain/constants";
 import { normalizeWhatsapp } from "@/lib/domain/phone";
 
 /** Teks pesan error standar: diawali [!] agar tidak hanya mengandalkan warna. */
@@ -43,6 +43,8 @@ export const designTextSchema = z.object({
 /** Aturan desain: produk, kategori, bahan, warna per bagian, gambar, dan teks. */
 export const designSchema = z.object({
   product: z.enum(["PDH", "VEST"]),
+  /** Model baju dari mockup (server memakai model kategori); opsional agar desain lama tetap valid. */
+  model: z.enum(DESIGN_MODELS).optional(),
   categoryId: z.number().int().positive(err("Pilih satu kategori desain untuk melanjutkan")),
   materialId: z.number().int().positive(err("Pilih jenis bahan")),
   colors: z.record(z.string(), z.string()), // nama bagian -> nama warna kain

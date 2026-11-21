@@ -4,10 +4,11 @@
  * mengubah nama warna menjadi kode hex untuk gambar, menghitung estimasi harga,
  * dan mengetahui apakah pengguna sudah mengubah template.
  */
-import type { GarmentImage, GarmentText } from "@/components/Garment";
+import { type GarmentImage, type GarmentText } from "@/components/Garment";
+import { toPaints } from "@/lib/domain/paint";
 import { calculatePrice } from "@/lib/domain/pricing";
 import type { Catalog } from "@/server/services/catalog-service";
-import { DEFAULT_COLORS, POSITION_KEYS, THREAD_COLORS } from "./garment-data";
+import { THREAD_COLORS, defaultColorsFor, partsFor, positionKeysFor, resolveModel, type PositionKey, type ProductType } from "./garment-data";
 import type { DesignState } from "./types";
 
 /**
@@ -17,11 +18,13 @@ import type { DesignState } from "./types";
 export function createInitialDesign(catalog: Catalog, categoryId?: number): DesignState {
   const category = catalog.categories.find((item) => item.id === categoryId) ?? catalog.categories.find((item) => item.product === "PDH") ?? catalog.categories[0];
   const material = catalog.materials.find((item) => item.product === category.product) ?? catalog.materials[0];
+  const model = resolveModel(category.product, category.designModel);
   return {
     product: category.product,
+    model,
     categoryId: category.id,
     materialId: material.id,
-    colors: { ...DEFAULT_COLORS[category.product] },
+    colors: defaultColorsFor(category.product, model),
     images: [],
     texts: [],
   };
@@ -29,15 +32,47 @@ export function createInitialDesign(catalog: Catalog, categoryId?: number): Desi
 
 /** Apakah pengguna sudah mengubah sesuatu dari template (warna berbeda, ada logo/teks)? */
 export function isDesignModified(design: DesignState): boolean {
-  const defaults = DEFAULT_COLORS[design.product];
+  const defaults = defaultColorsFor(design.product, design.model);
   const colorChanged = Object.entries(defaults).some(([part, color]) => design.colors[part] !== color);
   return colorChanged || design.images.length > 0 || design.texts.length > 0;
 }
 
-/** Mengubah { Badan: "Navy" } menjadi { Badan: "#1F2A44" } memakai palet dari database. */
+/**
+ * Mengganti model (produk sama). Desain yang belum diubah memakai isi bawaan model baru;
+ * desain yang sudah diubah mempertahankan warna bagian yang sama, bagian baru diisi bawaan.
+ */
+export function withModel(design: DesignState, model: string): DesignState {
+  const defaults = defaultColorsFor(design.product, model);
+  const keepColors = isDesignModified(design);
+  const colors = Object.fromEntries(
+    partsFor(design.product, model).map((part) => [part, (keepColors ? design.colors[part] : undefined) ?? defaults[part]]),
+  );
+  return { ...design, model, colors };
+}
+
+/**
+ * Menyelaraskan desain (mis. draf lama) dengan kategorinya: model = model kategori, bagian disesuaikan
+ * dengan model itu (isi lama dipertahankan, "Tutup saku" lama dibaca sebagai "Saku"), dan posisi
+ * logo/teks yang tidak ada di produk itu (mis. lengan di VEST) dipindah ke posisi yang ada.
+ */
+export function syncModelWithCategory(design: DesignState, catalog: Catalog): DesignState {
+  const category = catalog.categories.find((item) => item.id === design.categoryId);
+  if (!category || category.product !== design.product) return design;
+  const model = resolveModel(design.product, category.designModel);
+  const parts = partsFor(design.product, model);
+  const images = fitPositions(design.product, design.images);
+  const texts = fitPositions(design.product, design.texts);
+  const inSync = model === design.model && parts.every((part) => part in design.colors) && Object.keys(design.colors).every((part) => parts.includes(part));
+  if (inSync) return { ...design, images, texts };
+  const defaults = defaultColorsFor(design.product, model);
+  const legacy: Record<string, string | undefined> = { Saku: design.colors["Tutup saku"] };
+  const colors = Object.fromEntries(parts.map((part) => [part, design.colors[part] ?? legacy[part] ?? defaults[part]]));
+  return { ...design, model, colors, images, texts };
+}
+
+/** Mengubah { Badan: "Navy", Bahu: "Batik Hijau" } menjadi cat untuk gambar (hex atau motif). */
 export function colorsToHex(colors: Record<string, string>, catalog: Catalog): Record<string, string> {
-  const hexByName = new Map(catalog.colors.map((color) => [color.name, color.hex]));
-  return Object.fromEntries(Object.entries(colors).map(([part, name]) => [part, hexByName.get(name) ?? "#CCCCCC"]));
+  return toPaints(colors, catalog.colors);
 }
 
 /** Menyiapkan daftar logo dan teks dalam bentuk yang dimengerti komponen Garment. */
@@ -70,7 +105,14 @@ export function estimateUnitPrice(design: DesignState, catalog: Catalog): number
   }).total;
 }
 
-/** Posisi preset berikutnya untuk logo yang sudah ada (dipakai saat kategori berganti). */
-export function resetPositions<T extends { position: string }>(items: T[]): T[] {
-  return items.map((item, index) => ({ ...item, position: POSITION_KEYS[index % POSITION_KEYS.length] }));
+/** Posisi preset berikutnya untuk logo/teks yang sudah ada (dipakai saat produk berganti). */
+export function resetPositions<T extends { position: PositionKey }>(product: ProductType, items: T[]): T[] {
+  const keys = positionKeysFor(product);
+  return items.map((item, index) => ({ ...item, position: keys[index % keys.length] }));
+}
+
+/** Memindahkan logo/teks yang posisinya tidak ada di produk ini; yang lain dibiarkan. */
+function fitPositions<T extends { position: PositionKey }>(product: ProductType, items: T[]): T[] {
+  const keys = positionKeysFor(product);
+  return items.map((item, index) => (keys.includes(item.position) ? item : { ...item, position: keys[index % keys.length] }));
 }

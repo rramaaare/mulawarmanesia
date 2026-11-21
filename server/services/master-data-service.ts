@@ -27,7 +27,7 @@ export interface MasterData {
 export async function getMasterData(): Promise<MasterData> {
   const since = new Date(Date.now() - 30 * 86_400_000);
   const [categories, materials, colors, shipping, settings, items] = await Promise.all([
-    db.category.findMany({ orderBy: { id: "asc" } }),
+    db.category.findMany({ orderBy: [{ product: "asc" }, { id: "asc" }] }),
     db.material.findMany({ orderBy: { id: "asc" } }),
     db.fabricColor.findMany({ orderBy: { id: "asc" } }),
     db.shippingRate.findMany({ orderBy: { id: "asc" } }),

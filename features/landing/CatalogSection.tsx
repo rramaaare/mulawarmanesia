@@ -8,17 +8,16 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { Tag } from "@/components/ui/Tag";
-import { Garment } from "@/components/Garment";
+import Image from "next/image";
 import { cn } from "@/lib/cn";
 import { formatRupiah } from "@/lib/format";
 import type { Catalog } from "@/server/services/catalog-service";
-import { PDH_RED, VEST_BLACK } from "./garment-colors";
 
 /** Kartu yang ditampilkan: kategori + ringkasan + latar pastel. */
 const FEATURED = [
-  { product: "PDH", category: "Organisasi", detail: "American Drill · bordir logo dada", tone: "bg-pastel-blue", colors: PDH_RED },
-  { product: "PDH", category: "Instansi", detail: "Nagata Drill · bordir dada & lengan", tone: "bg-pastel-blue", colors: PDH_RED },
-  { product: "VEST", category: "Proyek", detail: "Taslan · strip reflektif · sablon", tone: "bg-pastel-butter", colors: VEST_BLACK },
+  { product: "PDH", category: "Model 02", image: "/landing/pdh-02-depan.webp", alt: "PDH Model 02 hijau dengan bahu hitam", detail: "Bahu kontras · bordir logo dada", tone: "bg-pastel-blue" },
+  { product: "PDH", category: "Model 07", image: "/landing/pdh-07-depan.webp", alt: "PDH Model 07 putih dengan aksen batik", detail: "Aksen batik · bordir dada & lengan", tone: "bg-pastel-blue" },
+  { product: "VEST", category: "Model 01", image: "/landing/vest-01-depan.webp", alt: "VEST Model 01 hijau army dengan bahu krem", detail: "Empat saku · bordir logo & nama", tone: "bg-pastel-butter" },
 ] as const;
 
 export function CatalogSection({ catalog }: { catalog: Catalog }) {
@@ -33,10 +32,10 @@ export function CatalogSection({ catalog }: { catalog: Catalog }) {
           {FEATURED.map((item) => {
             const category = catalog.categories.find((row) => row.product === item.product && row.name === item.category);
             return (
-              <Link key={item.category} href={category ? `/editor?kategori=${category.id}` : "/editor"} className="group">
+              <Link key={`${item.product}-${item.category}`} href={category ? `/editor?kategori=${category.id}` : "/editor"} className="group">
                 <Card pressable className="flex h-full flex-col gap-4 !p-3">
                   <div className={cn("flex h-[220px] items-center justify-center rounded-control border-2 border-ink px-4 py-5 md:h-auto md:rounded-card", item.tone)}>
-                    <Garment product={item.product} colors={item.colors} className="mx-auto h-44 w-auto" />
+                    <Image src={item.image} alt={item.alt} width={600} height={680} className="mx-auto h-44 w-auto" />
                   </div>
                   <div className="flex flex-1 flex-col gap-1 px-2 pb-2">
                     <div>
