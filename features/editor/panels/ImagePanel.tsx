@@ -1,7 +1,7 @@
 "use client";
 /**
- * Panel Gambar: unggah logo (PNG/SVG/JPG, maks. 5 MB), pilih posisi preset
- * dan teknik (bordir/sablon). Maksimal 4 gambar per desain. File disimpan di
+ * Panel Gambar: unggah logo (PNG/SVG/JPG, maks. 5 MB), pilih posisi preset, ukuran,
+ * dan teknik (bordir/sablon). Logo juga bisa digeser/diubah ukurannya langsung di gambar baju. Maksimal 4 gambar per desain. File disimpan di
  * browser (IndexedDB) sampai pengguna menekan "Bayar sekarang".
  */
 import { useRef, useState } from "react";
@@ -12,7 +12,9 @@ import { SelectInput } from "@/components/ui/Field";
 import { MAX_IMAGES, DECORATION_FEE } from "@/lib/domain/constants";
 import { formatRupiah } from "@/lib/format";
 import { saveFile } from "../draft-storage";
-import { validateLogoFile } from "../image-validation";
+import { readSize, validateLogoFile } from "../image-validation";
+import { cn } from "@/lib/cn";
+import { SizeControls } from "./SizeControls";
 import { POSITIONS, positionKeysFor, type PositionKey, type ProductType } from "../garment-data";
 import type { DecorationTechnique, EditorImage } from "../types";
 
@@ -25,9 +27,12 @@ interface ImagePanelProps {
   onRemove: (id: string) => void;
   /** Memberi tahu editor posisi mana yang sedang disorot (garis putus-putus). */
   onFocusPosition: (position: PositionKey | null) => void;
+  /** Logo yang sedang dipilih di gambar baju (disorot di daftar). */
+  selectedId: string | null;
+  onSelect: (id: string) => void;
 }
 
-export function ImagePanel({ product, images, onAdd, onChange, onRemove, onFocusPosition }: ImagePanelProps) {
+export function ImagePanel({ product, images, onAdd, onChange, onRemove, onFocusPosition, selectedId, onSelect }: ImagePanelProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -45,10 +50,14 @@ export function ImagePanel({ product, images, onAdd, onChange, onRemove, onFocus
     }
     const id = crypto.randomUUID();
     await saveFile(id, file);
+    // Bentuk logo (lebar/tinggi) supaya logo panjang dipasang memanjang
+    const aspect = await readSize(file)
+      .then(({ width, height }) => (width > 0 && height > 0 ? Math.round((width / height) * 100) / 100 : 1))
+      .catch(() => 1);
     // Pilih posisi depan pertama yang belum dipakai
     const used = new Set(images.map((image) => image.position));
     const position = positionKeysFor(product).find((key) => !used.has(key)) ?? "dada_kiri";
-    onAdd({ id, fileKey: id, fileName: file.name, previewUrl: URL.createObjectURL(file), position, technique: "bordir" });
+    onAdd({ id, fileKey: id, fileName: file.name, previewUrl: URL.createObjectURL(file), position, technique: "bordir", aspect });
   }
 
   return (
@@ -83,15 +92,19 @@ export function ImagePanel({ product, images, onAdd, onChange, onRemove, onFocus
         }}
       />
 
+      {images.length > 0 && <p className="text-xs text-ink-muted">Tip: geser logo langsung di gambar baju, tarik bulatan di sudutnya untuk mengubah ukuran.</p>}
+
       {/* Daftar gambar yang sudah ditambahkan */}
       <ul className="flex flex-col gap-3">
         {images.map((image) => (
           <li key={image.id}>
-            <Card flat className="flex flex-col gap-3 p-3">
+            <Card flat className={cn("flex flex-col gap-3 p-3", image.id === selectedId && "border-accent bg-accent-subtle")}>
               <div className="flex items-center gap-3">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={image.previewUrl} alt="" className="h-12 w-12 rounded-control border-2 border-ink bg-surface object-contain" />
-                <p className="min-w-0 flex-1 truncate text-sm font-semibold">{image.fileName}</p>
+                <button type="button" onClick={() => onSelect(image.id)} className="min-w-0 flex-1 truncate text-left text-sm font-semibold" title="Pilih di gambar baju">
+                  {image.fileName}
+                </button>
                 <Button variant="ghost" size="sm" onClick={() => onRemove(image.id)} aria-label={`Hapus ${image.fileName}`}>Hapus</Button>
               </div>
               <div className="grid grid-cols-2 gap-2">
@@ -113,6 +126,7 @@ export function ImagePanel({ product, images, onAdd, onChange, onRemove, onFocus
                   <option value="sablon">Sablon (+{formatRupiah(DECORATION_FEE.sablon)}/pcs)</option>
                 </SelectInput>
               </div>
+              <SizeControls adjust={image} name={image.fileName} onChange={(patch) => onChange(image.id, patch)} />
             </Card>
           </li>
         ))}

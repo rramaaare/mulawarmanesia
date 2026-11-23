@@ -12,7 +12,7 @@ import { StatusChanger } from "@/features/admin/StatusChanger";
 import { StatusPill } from "@/features/admin/StatusPill";
 import { OrderDesignPreview, type StoredDesign } from "@/features/status/OrderDesignPreview";
 import { findMotif } from "@/lib/domain/constants";
-import { POSITIONS, type PositionKey } from "@/features/editor/garment-data";
+import { POSITIONS, placementNote, type PositionKey } from "@/features/editor/garment-data";
 import { SIZES } from "@/lib/domain/constants";
 import { STATUS_LABEL } from "@/lib/domain/order-status";
 import { cn } from "@/lib/cn";
@@ -117,6 +117,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
                       {asset.info ? formatBytes(asset.info.sizeBytes) : "ukuran tidak diketahui"}
                       {asset.info?.isVector ? " · vektor (SVG)" : asset.info?.width ? ` · ${asset.info.width} × ${asset.info.height} px` : ""}
                       {` · ${asset.technique === "bordir" ? "Bordir" : "Sablon"} · ${POSITIONS[asset.position as PositionKey]?.label.toLowerCase() ?? asset.position}`}
+                      {placementNote(design.images.find((image) => image.fileName === asset.fileName) ?? {})}
                     </p>
                   </div>
                   <a href={`/api/uploads/${asset.fileName}`} download={asset.label} className="shrink-0 text-sm font-semibold text-accent hover:underline">Unduh</a>

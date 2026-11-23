@@ -17,7 +17,7 @@ import { formatRupiah } from "@/lib/format";
 import type { Catalog } from "@/server/services/catalog-service";
 import { colorsToHex, createInitialDesign, estimateUnitPrice, isDesignModified, resetPositions, syncModelWithCategory, toGarmentOverlays, withModel } from "./design-helpers";
 import { loadDraft, restorePreviews, saveDraft } from "./draft-storage";
-import { POSITIONS, defaultColorsFor, resolveModel, type PositionKey } from "./garment-data";
+import { defaultColorsFor, resolveModel, sideOf, type OverlayAdjust, type PositionKey } from "./garment-data";
 import { ColorPanel } from "./panels/ColorPanel";
 import { ImagePanel } from "./panels/ImagePanel";
 import { ModelPanel } from "./panels/ModelPanel";
@@ -46,6 +46,7 @@ export function EditorApp({ catalog, initialCategoryId }: EditorAppProps) {
   const [focusPosition, setFocusPosition] = useState<PositionKey | null>(null);
   const [pendingCategory, setPendingCategory] = useState<number | null>(null); // menunggu konfirmasi
   const [editingTextId, setEditingTextId] = useState<string | null>(null); // teks yang sedang diubah
+  const [selectedId, setSelectedId] = useState<string | null>(null); // logo/teks yang dipilih di gambar baju
   const [restored, setRestored] = useState(false);
 
   // 1. Saat pertama dibuka: pulihkan draf terakhir (kecuali datang dari kartu katalog tertentu)
@@ -170,14 +171,21 @@ export function EditorApp({ catalog, initialCategoryId }: EditorAppProps) {
               images={design.images}
               onAdd={(image) => {
                 update((current) => ({ ...current, images: [...current.images, image] }));
-                setSide(POSITIONS[image.position].side); // tampilkan sisi tempat logo dipasang
+                setSide((current) => sideOf(image.position, current)); // tampilkan sisi tempat logo dipasang
+                setSelectedId(image.id);
               }}
               onChange={(id, patch) => {
-                update((current) => ({ ...current, images: current.images.map((image) => (image.id === id ? { ...image, ...patch } : image)) }));
-                if (patch.position) setSide(POSITIONS[patch.position].side);
+                // Pindah posisi preset = geseran manual dihapus
+                const reset = patch.position ? { offsetX: 0, offsetY: 0 } : {};
+                update((current) => ({ ...current, images: current.images.map((image) => (image.id === id ? { ...image, ...patch, ...reset } : image)) }));
+                const position = patch.position;
+                if (position) setSide((current) => sideOf(position, current));
+                setSelectedId(id);
               }}
               onRemove={(id) => update((current) => ({ ...current, images: current.images.filter((image) => image.id !== id) }))}
               onFocusPosition={setFocusPosition}
+              selectedId={selectedId}
+              onSelect={setSelectedId}
             />
           )}
           {tab === "Teks" && (
@@ -186,16 +194,22 @@ export function EditorApp({ catalog, initialCategoryId }: EditorAppProps) {
               texts={design.texts}
               onAdd={(text) => {
                 update((current) => ({ ...current, texts: [...current.texts, text] }));
-                setSide(POSITIONS[text.position].side); // teks di punggung tidak terlihat bila pratinjau masih tampak depan
+                setSide((current) => sideOf(text.position, current)); // teks di punggung tidak terlihat bila pratinjau masih tampak depan
+                setSelectedId(text.id);
               }}
               onUpdate={(id, patch) => {
-                update((current) => ({ ...current, texts: current.texts.map((text) => (text.id === id ? { ...text, ...patch } : text)) }));
-                setSide(POSITIONS[patch.position].side);
+                // Pindah posisi preset = geseran manual dihapus
+                update((current) => ({
+                  ...current,
+                  texts: current.texts.map((text) => (text.id === id ? { ...text, ...patch, ...(patch.position !== text.position ? { offsetX: 0, offsetY: 0 } : {}) } : text)),
+                }));
+                setSide((current) => sideOf(patch.position, current));
               }}
               onRemove={(id) => update((current) => ({ ...current, texts: current.texts.filter((text) => text.id !== id) }))}
               onFocusPosition={setFocusPosition}
               editingId={editingTextId}
               onEditingChange={setEditingTextId}
+              onAdjust={(id, patch) => update((current) => ({ ...current, texts: current.texts.map((text) => (text.id === id ? { ...text, ...patch } : text)) }))}
             />
           )}
         </Card>
@@ -249,12 +263,24 @@ export function EditorApp({ catalog, initialCategoryId }: EditorAppProps) {
               images={overlays.images}
               texts={overlays.texts}
               highlight={focusPosition}
-              onTextClick={(index) => {
-                const text = design.texts[index];
-                if (!text) return;
-                setTab("Teks");
-                setEditingTextId(text.id);
+              selectedId={selectedId}
+              onSelect={(kind, id) => {
+                setSelectedId(id);
+                // Buka panel yang sesuai; teks langsung masuk mode ubah
+                if (kind === "text") {
+                  setTab("Teks");
+                  setEditingTextId(id);
+                } else {
+                  setTab("Gambar");
+                }
               }}
+              onTransform={(kind, id, adjust: Required<OverlayAdjust>) =>
+                update((current) =>
+                  kind === "image"
+                    ? { ...current, images: current.images.map((image) => (image.id === id ? { ...image, ...adjust } : image)) }
+                    : { ...current, texts: current.texts.map((text) => (text.id === id ? { ...text, ...adjust } : text)) },
+                )
+              }
               className="m-auto h-auto shrink-0 transition-[width]"
               // Lebar dasar 340 px (atau selebar kotak di layar kecil) dikali persen zoom
               style={{ width: `calc(min(340px, 100%) * ${zoom / 100})`, maxWidth: "none" }}

@@ -7,6 +7,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PrintButton } from "@/features/admin/PrintButton";
 import { OrderDesignPreview, type StoredDesign } from "@/features/status/OrderDesignPreview";
+import { POSITIONS, placementNote } from "@/features/editor/garment-data";
 import { SIZES } from "@/lib/domain/constants";
 import { formatDateTimeWita } from "@/lib/format";
 import { getCatalog } from "@/server/services/catalog-service";
@@ -50,8 +51,8 @@ export default async function ProductionSheetPage({ params }: { params: Promise<
       <section>
         <h2 className="mb-2 text-lg font-medium">Logo &amp; teks</h2>
         <ul className="flex flex-col gap-1 text-sm">
-          {design.images.map((image) => <li key={image.fileName}>Logo {image.label ?? image.fileName} · {image.technique ?? "bordir"} · {image.position.replace(/_/g, " ")}</li>)}
-          {design.texts.map((text, index) => <li key={index}>Teks “{text.content}” · {text.font} · {text.color} · {text.position.replace(/_/g, " ")}</li>)}
+          {design.images.map((image) => <li key={image.fileName}>Logo {image.label ?? image.fileName} · {image.technique ?? "bordir"} · {POSITIONS[image.position]?.label.toLowerCase() ?? image.position.replace(/_/g, " ")}{placementNote(image)}</li>)}
+          {design.texts.map((text, index) => <li key={index}>Teks “{text.content}” · {text.font} · {text.color} · {POSITIONS[text.position]?.label.toLowerCase() ?? text.position.replace(/_/g, " ")}{placementNote(text)}</li>)}
           {design.images.length === 0 && design.texts.length === 0 && <li className="text-ink-muted">Tanpa logo atau teks.</li>}
         </ul>
       </section>

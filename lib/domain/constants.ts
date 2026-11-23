@@ -41,6 +41,22 @@ export function findMotif(name: string | undefined): Motif | undefined {
   return MOTIFS.find((motif) => motif.name === name);
 }
 
+/** Posisi preset logo/teks di baju (urutan tampil di editor). */
+export const DESIGN_POSITIONS = [
+  "dada_kiri",
+  "dada_kanan",
+  "lengan_kiri",
+  "lengan_kanan",
+  "kerah_belakang",
+  "punggung_atas",
+  "punggung_tengah",
+  "punggung_bawah",
+  "lingkar_bawah",
+] as const;
+
+/** Batas penyesuaian manual logo/teks di editor (satuan kanvas gambar baju 300 x 340). */
+export const OVERLAY_LIMITS = { offset: 150, minScale: 0.5, maxScale: 2.5 } as const;
+
 /** Minimal total pcs dalam satu pesanan. */
 export const MIN_ORDER_PCS = 12;
 

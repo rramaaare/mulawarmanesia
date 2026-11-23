@@ -7,7 +7,7 @@
  */
 import { Garment, type GarmentImage, type GarmentText } from "@/components/Garment";
 import { toPaints } from "@/lib/domain/paint";
-import { THREAD_COLORS, type PositionKey, type ProductType } from "@/features/editor/garment-data";
+import { THREAD_COLORS, type OverlayAdjust, type PositionKey, type ProductType } from "@/features/editor/garment-data";
 import type { Catalog } from "@/server/services/catalog-service";
 import type { OrderView } from "@/server/services/order-view-service";
 
@@ -17,8 +17,8 @@ export interface StoredDesign {
   /** Model baju; kosong untuk pesanan lama (diambil dari kategori). */
   model?: string;
   colors: Record<string, string>;
-  images: { fileName: string; position: PositionKey; technique?: string; label?: string }[];
-  texts: { content: string; font: string; color: string; position: PositionKey }[];
+  images: ({ fileName: string; position: PositionKey; technique?: string; label?: string; aspect?: number } & OverlayAdjust)[];
+  texts: ({ content: string; font: string; color: string; position: PositionKey } & OverlayAdjust)[];
 }
 
 interface OrderDesignPreviewProps {
@@ -33,8 +33,22 @@ export function OrderDesignPreview({ order, catalog, separate = false, heightCla
   const design = order.item.designJson as StoredDesign;
   const model = design.model ?? order.item.categoryModel ?? undefined;
   const colors = toPaints(design.colors, catalog.colors);
-  const images: GarmentImage[] = design.images.map((image) => ({ src: `/api/uploads/${image.fileName}`, position: image.position }));
+  const images: GarmentImage[] = design.images.map((image) => ({
+    src: `/api/uploads/${image.fileName}`,
+    position: image.position,
+    aspect: image.aspect,
+    offsetX: image.offsetX,
+    offsetY: image.offsetY,
+    scale: image.scale,
+    flipX: image.flipX,
+    flipY: image.flipY,
+  }));
   const texts: GarmentText[] = design.texts.map((text) => ({
+    offsetX: text.offsetX,
+    offsetY: text.offsetY,
+    scale: text.scale,
+    flipX: text.flipX,
+    flipY: text.flipY,
     content: text.content,
     fontName: text.font,
     colorHex: THREAD_COLORS.find((color) => color.name === text.color)?.hex ?? "#FFFFFF",

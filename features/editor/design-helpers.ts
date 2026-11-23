@@ -80,8 +80,24 @@ export function toGarmentOverlays(design: DesignState): { images: GarmentImage[]
   return {
     images: design.images
       .filter((image) => image.previewUrl)
-      .map((image) => ({ src: image.previewUrl as string, position: image.position })),
+      .map((image) => ({
+        id: image.id,
+        src: image.previewUrl as string,
+        position: image.position,
+        aspect: image.aspect,
+        offsetX: image.offsetX,
+        offsetY: image.offsetY,
+        scale: image.scale,
+        flipX: image.flipX,
+        flipY: image.flipY,
+      })),
     texts: design.texts.map((text) => ({
+      id: text.id,
+      offsetX: text.offsetX,
+      offsetY: text.offsetY,
+      scale: text.scale,
+      flipX: text.flipX,
+      flipY: text.flipY,
       content: text.content,
       fontName: text.fontName,
       colorHex: THREAD_COLORS.find((color) => color.name === text.colorName)?.hex ?? "#FFFFFF",
@@ -106,13 +122,14 @@ export function estimateUnitPrice(design: DesignState, catalog: Catalog): number
 }
 
 /** Posisi preset berikutnya untuk logo/teks yang sudah ada (dipakai saat produk berganti). */
-export function resetPositions<T extends { position: PositionKey }>(product: ProductType, items: T[]): T[] {
+export function resetPositions<T extends { position: PositionKey; offsetX?: number; offsetY?: number }>(product: ProductType, items: T[]): T[] {
   const keys = positionKeysFor(product);
-  return items.map((item, index) => ({ ...item, position: keys[index % keys.length] }));
+  // Posisi berganti, geseran manual tidak lagi relevan
+  return items.map((item, index) => ({ ...item, position: keys[index % keys.length], offsetX: 0, offsetY: 0 }));
 }
 
 /** Memindahkan logo/teks yang posisinya tidak ada di produk ini; yang lain dibiarkan. */
-function fitPositions<T extends { position: PositionKey }>(product: ProductType, items: T[]): T[] {
+function fitPositions<T extends { position: PositionKey; offsetX?: number; offsetY?: number }>(product: ProductType, items: T[]): T[] {
   const keys = positionKeysFor(product);
-  return items.map((item, index) => (keys.includes(item.position) ? item : { ...item, position: keys[index % keys.length] }));
+  return items.map((item, index) => (keys.includes(item.position) ? item : { ...item, position: keys[index % keys.length], offsetX: 0, offsetY: 0 }));
 }

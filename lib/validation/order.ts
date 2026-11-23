@@ -5,23 +5,28 @@
  * aturan tidak pernah berbeda. Pesan error sesuai PRD §10 dan diawali "[!]".
  */
 import { z } from "zod";
-import { DESIGN_MODELS, MAX_IMAGES, MIN_ORDER_PCS, SIZES } from "@/lib/domain/constants";
+import { DESIGN_MODELS, DESIGN_POSITIONS, MAX_IMAGES, MIN_ORDER_PCS, OVERLAY_LIMITS, SIZES } from "@/lib/domain/constants";
 import { normalizeWhatsapp } from "@/lib/domain/phone";
 
 /** Teks pesan error standar: diawali [!] agar tidak hanya mengandalkan warna. */
 const err = (message: string) => `[!] ${message}`;
 
+/** Penyesuaian manual logo/teks (geser & ukuran) dari editor; semua opsional. */
+const overlayAdjust = {
+  offsetX: z.number().min(-OVERLAY_LIMITS.offset).max(OVERLAY_LIMITS.offset).optional(),
+  offsetY: z.number().min(-OVERLAY_LIMITS.offset).max(OVERLAY_LIMITS.offset).optional(),
+  scale: z.number().min(OVERLAY_LIMITS.minScale).max(OVERLAY_LIMITS.maxScale).optional(),
+  flipX: z.boolean().optional(),
+  flipY: z.boolean().optional(),
+};
+
 /** Aturan satu gambar/logo di desain. */
 export const designImageSchema = z.object({
   fileName: z.string().min(1), // nama file hasil unggah di server
-  position: z.enum([
-    "dada_kiri",
-    "dada_kanan",
-    "lengan_kiri",
-    "lengan_kanan",
-    "punggung_atas",
-    "punggung_tengah",
-  ]),
+  position: z.enum(DESIGN_POSITIONS),
+  /** Perbandingan lebar/tinggi logo asli. */
+  aspect: z.number().min(0.1).max(10).optional(),
+  ...overlayAdjust,
   technique: z.enum(["bordir", "sablon"]),
   /** Nama file asli dari komputer pelanggan (hanya untuk ditampilkan admin). */
   label: z.string().max(120).optional(),
@@ -37,7 +42,8 @@ export const designTextSchema = z.object({
     .refine((value) => !/\p{Extended_Pictographic}/u.test(value), err("Teks tidak boleh berisi emoji")),
   font: z.string().min(1),
   color: z.string().min(1),
-  position: z.string().min(1),
+  position: z.enum(DESIGN_POSITIONS),
+  ...overlayAdjust,
 });
 
 /** Aturan desain: produk, kategori, bahan, warna per bagian, gambar, dan teks. */

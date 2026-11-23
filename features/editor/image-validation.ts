@@ -8,8 +8,8 @@ import { MAX_LOGO_BYTES } from "@/lib/domain/constants";
 /** Resolusi minimal sisi terpendek untuk gambar bitmap agar bordir tajam. */
 const MIN_SIDE_PX = 500;
 
-/** Membaca lebar dan tinggi gambar dari file. */
-function readSize(file: File): Promise<{ width: number; height: number }> {
+/** Membaca lebar dan tinggi gambar dari file (juga dipakai untuk menyimpan bentuk logo). */
+export function readSize(file: File): Promise<{ width: number; height: number }> {
   return new Promise((resolve, reject) => {
     const url = URL.createObjectURL(file);
     const image = new Image();
