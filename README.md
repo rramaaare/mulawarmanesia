@@ -416,11 +416,11 @@ Aturan-aturan ini diuji otomatis di folder `tests/` (misalnya `acid.test.ts` dan
 
 <div align="center">
 
-| **Nama** | **NIM** | **Peran** | **Kontribusi** | **GitHub** |
+| **Nama** |**Peran** | **Kontribusi** |
 |---|---|---|---|---|
-| Taufik Ramadhani | 2409116001 | Ketua tim | backend dan database | [![GitHub](https://img.shields.io/badge/-rramaaare-black?logo=github&style=flat-square)](https://github.com/rramaaare) |
-| Ahmad Sepriza | 2409116025 | Anggota | UI/UX dan frontend |  |
-| Nabila Fitriani | 2509116063 | Anggota | dokumentasi dan pengujian | [![GitHub](https://img.shields.io/badge/-nbilaftrnii-black?logo=github&style=flat-square)](https://github.com/nbilaftrnii) |
+| Taufik Ramadhani | Ketua tim | backend dan database |
+| Ahmad Sepriza | Anggota | UI/UX dan frontend |
+| Nabila Fitriani | Anggota | dokumentasi dan pengujian |
 
 </div>
 
