@@ -31,12 +31,9 @@
 
 Selama ini pesan seragam di UMKM konveksi biasanya lewat WhatsApp: tanya model, kirim contoh gambar, tawar-menawar, transfer manual, lalu menunggu tanpa kabar. Website ini mengubah proses itu jadi alur yang jelas dan bisa dijalankan sendiri oleh pelanggan, sementara pemilik usaha mendapat panel untuk mengelola pesanan dan produksi.
 
-> Dibuat untuk **Lomba Pengembangan Website FUAD FAIR 2026** (UINSI Samarinda)
-> Tema: *Local Business Innovation (Bisnis dan UMKM)*
+Pengguna dalam website ini terdapat tiga role:
 
-Pengguna website ini ada tiga:
-
-| Pengguna | Yang bisa dilakukan |
+| Role | Yang bisa dilakukan |
 |---|---|
 | 🧑 **Pelanggan** | Lihat produk, buat desain, pesan, bayar, dan lacak pesanan. Tidak perlu login. |
 | 👷 **Admin** | Lihat dashboard, kelola pesanan, ubah status produksi, ekspor CSV. |
