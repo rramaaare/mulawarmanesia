@@ -17,7 +17,6 @@
 - [⚙️ Fitur Utama](#️-fitur-utama)
 - [🔐 Peran dan Hak Akses](#-peran-dan-hak-akses)
 - [🧰 Teknologi yang Digunakan](#-teknologi-yang-digunakan)
-- [🖼️ Tampilan Website](#️-tampilan-website)
 - [🧭 Flowchart](#-flowchart)
 - [🚀 Cara Menjalankan Proyek](#-cara-menjalankan-proyek)
 - [🩹 Troubleshooting](#-troubleshooting)
