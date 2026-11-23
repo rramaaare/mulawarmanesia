@@ -4,7 +4,7 @@
  */
 import { cn } from "@/lib/cn";
 import { formatDateTimeWita } from "@/lib/format";
-import { STATUS_LABEL, TIMELINE_STEPS, type StatusName } from "@/lib/domain/order-status";
+import { TIMELINE_STEPS, statusLabelFor, type StatusName } from "@/lib/domain/order-status";
 import type { OrderView } from "@/server/services/order-view-service";
 
 /** Memetakan status pesanan ke tahap timeline yang sedang berjalan. */
@@ -26,7 +26,7 @@ export function OrderTimeline({ order }: { order: OrderView }) {
       {TIMELINE_STEPS.map((step, index) => {
         const done = index < currentIndex || order.status === "selesai";
         const active = index === currentIndex && order.status !== "selesai";
-        const label = active && order.status === "perlu_revisi" ? "Perlu revisi" : STATUS_LABEL[step];
+        const label = active && order.status === "perlu_revisi" ? "Perlu revisi" : statusLabelFor(step, order.shippingMethod);
         const time = timeOf(step);
         return (
           <li key={step} className="flex gap-4">

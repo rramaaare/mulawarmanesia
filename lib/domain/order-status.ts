@@ -45,6 +45,18 @@ export const STATUS_LABEL: Record<StatusName, string> = {
   dibatalkan: "Dibatalkan",
 };
 
+/**
+ * Label status sesuai cara pengiriman: pesanan "Ambil di workshop" tidak dikirim kurir,
+ * jadi tahap siap_kirim/dikirim dibaca "Siap diambil"/"Sudah diambil".
+ */
+export function statusLabelFor(status: StatusName, shippingMethod: "KIRIM" | "AMBIL"): string {
+  if (shippingMethod === "AMBIL") {
+    if (status === "siap_kirim") return "Siap diambil";
+    if (status === "dikirim") return "Sudah diambil";
+  }
+  return STATUS_LABEL[status];
+}
+
 /** Tahap yang tampil di timeline pelanggan (8 tahap, PRD §8.8). */
 export const TIMELINE_STEPS: StatusName[] = [
   "menunggu_pembayaran",

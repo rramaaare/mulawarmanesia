@@ -26,6 +26,11 @@ export async function changeOrderStatus(code: string, adminEmail: string, rawInp
     if (!canChangeStatus(from, input.status)) {
       throw new AppError("[!] Status hanya bisa maju satu tahap", 409);
     }
+    // Dikirim ke alamat wajib kurir + resi; ambil di workshop tidak memakai kurir/resi
+    const delivered = order.shippingMethod === "KIRIM";
+    if (input.status === "dikirim" && delivered && (!input.courier || !input.resi)) {
+      throw new AppError("[!] Isi kurir dan nomor resi", 400, { resi: "[!] Isi kurir dan nomor resi" });
+    }
     // Aturan DP: barang tidak boleh siap kirim sebelum tagihan lunas
     if (input.status === "siap_kirim" && order.paymentState !== "lunas") {
       throw new AppError("[!] Sisa tagihan DP belum dibayar. Pesanan belum bisa siap kirim", 409);
@@ -37,7 +42,7 @@ export async function changeOrderStatus(code: string, adminEmail: string, rawInp
         status: input.status,
         version: { increment: 1 },
         revisionReason: input.status === "perlu_revisi" ? input.note : null,
-        ...(input.status === "dikirim" ? { courier: input.courier, resi: input.resi } : {}),
+        ...(input.status === "dikirim" && delivered ? { courier: input.courier, resi: input.resi } : {}),
       },
     });
     await tx.orderStatusLog.create({

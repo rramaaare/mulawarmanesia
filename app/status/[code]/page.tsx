@@ -10,7 +10,7 @@ import { Navbar } from "@/components/ui/Navbar";
 import { Tag } from "@/components/ui/Tag";
 import { OrderDesignPreview } from "@/features/status/OrderDesignPreview";
 import { OrderTimeline } from "@/features/status/OrderTimeline";
-import { STATUS_LABEL } from "@/lib/domain/order-status";
+import { statusLabelFor } from "@/lib/domain/order-status";
 import { formatRupiah } from "@/lib/format";
 import { getCatalog } from "@/server/services/catalog-service";
 import { getOrderByToken } from "@/server/services/order-view-service";
@@ -42,7 +42,7 @@ export default async function StatusPage({
       <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-4 py-10 md:px-8">
         <div className="flex flex-wrap items-center gap-3">
           <h1 className="text-[28px] font-medium md:text-3xl md:font-semibold">{order.code}</h1>
-          <Tag tone={order.status === "perlu_revisi" ? "warning" : order.status === "selesai" ? "success" : "accent"}>{STATUS_LABEL[order.status]}</Tag>
+          <Tag tone={order.status === "perlu_revisi" ? "warning" : order.status === "selesai" ? "success" : "accent"}>{statusLabelFor(order.status, order.shippingMethod)}</Tag>
         </div>
 
         {order.status === "perlu_revisi" && <Alert tone="warning" title="Desainmu perlu direvisi">{order.revisionReason} Admin akan menghubungi lewat WhatsApp.</Alert>}

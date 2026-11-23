@@ -198,7 +198,7 @@ export function AdminSidebar({ role, name, email, counts }: AdminSidebarProps) {
       {/* Atas: logo + label peran */}
       <div className="flex items-center justify-between lg:block">
         <div className={cn("flex flex-col gap-1.5", collapsed && "lg:items-center")}>
-          <Logo compact={collapsed} />
+          <Logo compact={collapsed} href="/admin" label="MULAWARMANESIA, ke dashboard admin" />
           <p className={cn("text-[10px] font-semibold uppercase tracking-widest text-accent max-lg:hidden", collapsed && "lg:hidden")}>{role === "SUPERADMIN" ? "Superadmin" : "Panel admin"}</p>
         </div>
         {/* Hamburger: hanya mobile */}

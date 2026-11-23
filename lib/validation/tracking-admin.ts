@@ -40,7 +40,6 @@ export const changeStatusSchema = z
         });
       }
     }
-    if (value.status === "dikirim" && (!value.courier || !value.resi)) {
-      ctx.addIssue({ code: "custom", path: ["resi"], message: err("Isi kurir dan nomor resi") });
-    }
+    // Kurir & resi hanya wajib untuk pesanan yang dikirim ke alamat (dicek di status-service,
+    // karena skema ini tidak tahu cara pengiriman pesanan)
   });

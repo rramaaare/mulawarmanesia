@@ -94,4 +94,29 @@ describe("ACID", () => {
     expect(saved.paymentState).toBe("lunas");
     expect(saved.amountPaid).toBe(saved.total);
   });
+
+  /** Membuat pesanan lunas lalu memajukannya sampai siap_kirim. */
+  async function orderReadyToShip(shipping: Record<string, unknown>) {
+    const order = await createOrder(await sampleCheckout({ shipping, paymentScheme: "LUNAS" }));
+    createdCodes.push(order.code);
+    const ticket = await startPayment(order.code, "va");
+    await simulateGatewayResult(ticket.gatewayRef, "sukses");
+    for (const status of ["cek_desain", "produksi", "qc", "siap_kirim"] as const) await changeOrderStatus(order.code, "tes", { status });
+    return order.code;
+  }
+
+  it("Ambil di workshop: boleh 'Sudah diambil' tanpa kurir & resi", async () => {
+    const code = await orderReadyToShip({ method: "AMBIL" });
+    await changeOrderStatus(code, "tes", { status: "dikirim" });
+    const saved = await db.order.findUniqueOrThrow({ where: { code } });
+    expect(saved.status).toBe("dikirim");
+    expect(saved.resi).toBeNull();
+  });
+
+  it("Kirim ke alamat: tetap wajib kurir & resi", async () => {
+    const code = await orderReadyToShip({ method: "KIRIM", address: "Jl. Contoh No. 1 RT 01", city: "Samarinda", postalCode: "75111" });
+    await expect(changeOrderStatus(code, "tes", { status: "dikirim" })).rejects.toThrow(/kurir dan nomor resi/);
+    await changeOrderStatus(code, "tes", { status: "dikirim", courier: "JNE", resi: "JNE123" });
+    expect((await db.order.findUniqueOrThrow({ where: { code } })).resi).toBe("JNE123");
+  });
 });

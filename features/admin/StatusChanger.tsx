@@ -4,7 +4,8 @@
  * Hanya menawarkan status yang BOLEH berikutnya (lib/domain/order-status.ts).
  *  - Saat "Cek desain": dua tombol langsung, "Setujui & mulai produksi" (minta konfirmasi karena
  *    desain dikunci) dan "Minta revisi" (wajib alasan 10-300 karakter yang dikirim ke pelanggan).
- *  - Tahap lain: pilih status berikutnya + catatan, lalu simpan. "Dikirim" wajib kurir + nomor resi.
+ *  - Tahap lain: pilih status berikutnya + catatan, lalu simpan. "Dikirim" wajib kurir + nomor resi,
+ *    KECUALI pesanan "Ambil di workshop" (tahapnya bernama "Siap diambil"/"Sudah diambil", tanpa kurir/resi).
  * Server tetap memeriksa ulang semua aturan.
  */
 import { useState } from "react";
@@ -14,11 +15,13 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Field, SelectInput, TextArea, TextInput } from "@/components/ui/Field";
 import { Modal } from "@/components/ui/Modal";
-import { allowedNextStatuses, STATUS_LABEL, type StatusName } from "@/lib/domain/order-status";
+import { allowedNextStatuses, statusLabelFor, type StatusName } from "@/lib/domain/order-status";
 import { callAdminApi } from "./admin-api";
 
-export function StatusChanger({ code, current }: { code: string; current: StatusName }) {
+export function StatusChanger({ code, current, shippingMethod }: { code: string; current: StatusName; shippingMethod: "KIRIM" | "AMBIL" }) {
   const router = useRouter();
+  const label = (status: StatusName) => statusLabelFor(status, shippingMethod);
+  const delivered = shippingMethod === "KIRIM";
   const options = allowedNextStatuses(current);
   const isDesignCheck = current === "cek_desain";
   const [target, setTarget] = useState<StatusName | "">("");
@@ -38,9 +41,9 @@ export function StatusChanger({ code, current }: { code: string; current: Status
     const result = await callAdminApi(`/api/admin/orders/${code}/status`, "PATCH", {
       status,
       note: note || undefined,
-      courier: courier || undefined,
-      resi: resi || undefined,
-    }, `Status diubah menjadi ${STATUS_LABEL[status]}.`);
+      courier: delivered ? courier || undefined : undefined,
+      resi: delivered ? resi || undefined : undefined,
+    }, `Status diubah menjadi ${label(status)}.`);
     setSaving(false);
     setConfirming(false);
     if (!result.ok) {
@@ -57,7 +60,7 @@ export function StatusChanger({ code, current }: { code: string; current: Status
     return (
       <Card>
         <h2 className="text-xl font-medium">Ubah status</h2>
-        <p className="mt-2 text-sm text-ink-muted">Status {STATUS_LABEL[current].toLowerCase()} tidak bisa diubah lagi.</p>
+        <p className="mt-2 text-sm text-ink-muted">Status {label(current).toLowerCase()} tidak bisa diubah lagi.</p>
       </Card>
     );
   }
@@ -77,14 +80,17 @@ export function StatusChanger({ code, current }: { code: string; current: Status
           {(props) => (
             <SelectInput {...props} value={target} onChange={(event) => { setTarget(event.target.value as StatusName); setErrors({}); }}>
               <option value="">Pilih status berikutnya</option>
-              {options.map((status) => <option key={status} value={status}>{STATUS_LABEL[status]}</option>)}
+              {options.map((status) => <option key={status} value={status}>{label(status)}</option>)}
             </SelectInput>
           )}
         </Field>
       )}
 
-      {/* Kurir + resi saat dikirim */}
-      {target === "dikirim" && (
+      {/* Kurir + resi saat dikirim ke alamat (ambil di workshop tidak perlu) */}
+      {target === "dikirim" && !delivered && (
+        <p className="text-xs text-ink-muted">Pesanan diambil sendiri di workshop, jadi tidak perlu kurir dan nomor resi.</p>
+      )}
+      {target === "dikirim" && delivered && (
         <div className="grid gap-3 sm:grid-cols-2">
           <Field label="Kurir" required error={errors.courier}>
             {(props) => <TextInput {...props} error={errors.courier} value={courier} placeholder="JNE / J&T / SiCepat" onChange={(event) => setCourier(event.target.value)} />}

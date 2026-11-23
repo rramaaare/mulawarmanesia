@@ -8,13 +8,14 @@ import { notFound } from "next/navigation";
 import { Alert } from "@/components/ui/Alert";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { DesignDownloadButton } from "@/features/admin/DesignDownloadButton";
 import { StatusChanger } from "@/features/admin/StatusChanger";
 import { StatusPill } from "@/features/admin/StatusPill";
 import { OrderDesignPreview, type StoredDesign } from "@/features/status/OrderDesignPreview";
 import { findMotif } from "@/lib/domain/constants";
 import { POSITIONS, placementNote, type PositionKey } from "@/features/editor/garment-data";
 import { SIZES } from "@/lib/domain/constants";
-import { STATUS_LABEL } from "@/lib/domain/order-status";
+import { statusLabelFor } from "@/lib/domain/order-status";
 import { cn } from "@/lib/cn";
 import { formatDateTimeWita, formatRupiah } from "@/lib/format";
 import { getCatalog } from "@/server/services/catalog-service";
@@ -78,6 +79,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <StatusPill status={order.status} prefix="Status: " />
+          <DesignDownloadButton code={order.code} title={`${order.item.product} ${order.item.categoryName} · ${order.item.materialName} · ${order.item.totalPcs} pcs`} />
           <Button href={`/admin/pesanan/${order.code}/lembar`} variant="secondary">Unduh lembar produksi (PDF)</Button>
         </div>
       </div>
@@ -190,7 +192,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
         </div>
 
         <div className="flex min-w-0 flex-col gap-6 xl:sticky xl:top-6">
-          <StatusChanger code={order.code} current={order.status} />
+          <StatusChanger code={order.code} current={order.status} shippingMethod={order.shippingMethod} />
 
           <Card className="flex flex-col gap-4 !p-5">
             <h2 className="text-xl font-medium">Pembayaran</h2>
@@ -226,7 +228,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
                       {!isLast && <span className="w-0.5 flex-1 bg-accent" />}
                     </div>
                     <div className="pb-5">
-                      <p className="text-sm font-medium">{STATUS_LABEL[log.status]}</p>
+                      <p className="text-sm font-medium">{statusLabelFor(log.status, order.shippingMethod)}</p>
                       <p className="text-xs text-ink-muted">{formatDateTimeWita(log.changedAt)} · {log.changedBy}</p>
                       {log.note && <p className="mt-1 text-xs text-ink-soft">“{log.note}”</p>}
                     </div>

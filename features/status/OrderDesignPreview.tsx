@@ -61,9 +61,10 @@ export function OrderDesignPreview({ order, catalog, separate = false, heightCla
 
   if (separate) {
     return (
-      <div className="grid grid-cols-2 gap-4">
+      // data-design-*: penanda agar tombol "Unduh desain" bisa menemukan gambar depan & belakang
+      <div className="grid grid-cols-2 gap-4" data-design-preview={order.code}>
         {sides.map(({ side, label }) => (
-          <figure key={side} className="flex flex-col gap-2">
+          <figure key={side} className="flex flex-col gap-2" data-design-side={side}>
             <div className="flex items-center justify-center rounded-card border-2 border-line bg-subtle p-4">
               <Garment product={design.product} model={model} colors={colors} side={side} images={images} texts={texts} className={`w-auto ${heightClass}`} />
             </div>
@@ -75,9 +76,9 @@ export function OrderDesignPreview({ order, catalog, separate = false, heightCla
   }
 
   return (
-    <div className="grid grid-cols-2 gap-3 rounded-card border-2 border-ink bg-subtle p-3">
+    <div className="grid grid-cols-2 gap-3 rounded-card border-2 border-ink bg-subtle p-3" data-design-preview={order.code}>
       {sides.map(({ side, label }) => (
-        <figure key={side} className="text-center">
+        <figure key={side} className="text-center" data-design-side={side}>
           <Garment product={design.product} model={model} colors={colors} side={side} images={images} texts={texts} className={`mx-auto w-auto ${heightClass}`} />
           <figcaption className="text-xs text-ink-muted">{label}</figcaption>
         </figure>
