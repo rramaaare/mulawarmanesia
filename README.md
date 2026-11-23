@@ -62,7 +62,7 @@ e. Mendukung UMKM lokal agar lebih siap bersaing lewat pemanfaatan teknologi dig
 
 Halaman awal berisi profil usaha, produk PDH & VEST, cara pesan, portofolio, dan testimoni, lengkap dengan efek paralaks. Ada juga halaman **Panduan Ukuran** untuk membantu memilih ukuran yang pas.
 
-<img width="1440" height="5039" alt="Group" src="https://github.com/user-attachments/assets/6f2d6570-9ce7-41ac-a9bf-f4364b53d43e" /><br>
+<img width="1347" height="679" alt="image" src="https://github.com/user-attachments/assets/6e087e0a-2c92-408c-ac52-32c86dd69f05" /><br>
 
 **2. Editor Desain**
 
@@ -74,25 +74,25 @@ Pelanggan bisa membuat desain seragam langsung di browser:
 - Lihat tampak depan dan belakang, plus undo/redo dan zoom
 - Draf tersimpan otomatis di browser, jadi tidak hilang kalau tab ditutup
 
-<img width="1440" height="1163" alt="Group (2)" src="https://github.com/user-attachments/assets/c06f3cce-cbdb-4b81-b9f3-069e15ffc4b3" /><br>
+<img width="1350" height="679" alt="Screenshot 2026-11-23 223059" src="https://github.com/user-attachments/assets/7c190fd7-337c-43ee-847b-e15493ea1547" /><br>
 
 **3. Halaman Pesanan**
 
 Isi ukuran dan jumlah (bisa pakai nama per orang), data pemesan, pengiriman (kirim ke alamat atau ambil di workshop), lalu pilih bayar **Lunas** atau **DP 50%**. Minimal total pesanan **12 pcs**, dan harga dihitung otomatis termasuk diskon volume.
 
-<img width="1440" height="2152" alt="Group (3)" src="https://github.com/user-attachments/assets/b7b61631-dd29-4937-8759-d8abab08204e" /><br>
+<img width="1350" height="677" alt="Screenshot 2026-11-23 223253" src="https://github.com/user-attachments/assets/6b12af9d-9208-439f-a9ba-d4299c762427" /><br>
 
 **4. Pembayaran**
 
 Pilih metode QRIS, Virtual Account, atau e-wallet lewat payment gateway. Pada versi demo dipakai simulator gateway. Pesanan yang tidak dibayar dalam **24 jam** kedaluwarsa otomatis.
 
-<img width="1440" height="1155" alt="Group (11)" src="https://github.com/user-attachments/assets/fc3f926c-243d-43c7-8787-2909122dcfea" /><br>
+<img width="1352" height="678" alt="Screenshot 2026-11-23 223509" src="https://github.com/user-attachments/assets/1d5dda33-948b-4794-abcd-e944d5c005a3" /><br>
 
 **5. Lacak Pesanan**
 
 Cek status pakai nomor pesanan dan nomor WhatsApp, lengkap dengan timeline 8 tahap. Pelanggan juga bisa melihat alasan revisi jika desainnya diminta diperbaiki.
 
-<img width="1440" height="1423" alt="Group (12)" src="https://github.com/user-attachments/assets/8b50ca56-d199-44f8-9872-8180a0ed0e18" /><br>
+<img width="1354" height="678" alt="Screenshot 2026-11-23 223728" src="https://github.com/user-attachments/assets/dea1d645-28cf-4ef2-8068-68f6345ccf6d" /><br>
 
 ---
 ### Fitur untuk Admin
