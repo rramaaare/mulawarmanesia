@@ -62,7 +62,7 @@ e. Mendukung UMKM lokal agar lebih siap bersaing lewat pemanfaatan teknologi dig
 
 Halaman awal berisi profil usaha, produk PDH & VEST, cara pesan, portofolio, dan testimoni, lengkap dengan efek paralaks. Ada juga halaman **Panduan Ukuran** untuk membantu memilih ukuran yang pas.
 
-<img width="1347" height="679" alt="image" src="https://github.com/user-attachments/assets/6e087e0a-2c92-408c-ac52-32c86dd69f05" /><br>
+<img width="1349" height="679" alt="image" src="https://github.com/user-attachments/assets/ee7ba90c-43aa-4829-9e86-9dd663ffcf1e" /><br>
 
 **2. Editor Desain**
 
