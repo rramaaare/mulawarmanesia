@@ -364,6 +364,6 @@ npm start           # jalankan hasil build
 
 [⬆️ Kembali ke Awal](#)
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=12,20,24&height=120&section=footer" alt="Footer" />
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:C12822,100:111111&height=120&section=footer" width="100%" alt="Footer" />
 
 </div>
