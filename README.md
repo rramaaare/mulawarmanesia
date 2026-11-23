@@ -30,11 +30,7 @@
 - [🧭 Perancangan Sistem](#-perancangan-sistem)
 - [🚀 Cara Menjalankan Proyek](#-cara-menjalankan-proyek)
 - [🩹 Troubleshooting](#-troubleshooting)
-- [📁 Struktur Proyek](#-struktur-proyek)
-- [🛡️ Integritas Data (ACID)](#️-integritas-data-acid)
-- [📝 Catatan Demo](#-catatan-demo)
 - [👥 Anggota Tim](#-anggota-tim)
-- [🙏 Atribusi](#-atribusi)
 
 ---
 
