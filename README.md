@@ -6,16 +6,6 @@
   <img src="https://readme-typing-svg.demolab.com?font=Poppins&weight=600&size=22&duration=3200&pause=900&color=C12822&center=true&vCenter=true&width=720&lines=Desain+seragam+sendiri+langsung+di+browser;Pesan+dan+bayar+tanpa+ribet;Pantau+status+pesanan+kapan+saja;Dibuat+untuk+UMKM+konveksi+Samarinda" alt="Typing animation" />
 </a>
 
-<br/>
-
-![Next.js](https://img.shields.io/badge/Next.js-16-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
-![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
-![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
-![Prisma](https://img.shields.io/badge/Prisma-7-2D3748?style=for-the-badge&logo=prisma&logoColor=white)
-![Node.js](https://img.shields.io/badge/Node.js-22.12+-5FA04E?style=for-the-badge&logo=nodedotjs&logoColor=white)
-
 </div>
 
 ---
@@ -27,11 +17,12 @@
 - [⚙️ Fitur Utama](#️-fitur-utama)
 - [🔐 Peran dan Hak Akses](#-peran-dan-hak-akses)
 - [🧰 Teknologi yang Digunakan](#-teknologi-yang-digunakan)
-- [🧭 Perancangan Sistem](#-perancangan-sistem)
+- [🖼️ Tampilan Website](#️-tampilan-website)
+- [🧭 Flowchart](#-flowchart)
 - [🚀 Cara Menjalankan Proyek](#-cara-menjalankan-proyek)
 - [🩹 Troubleshooting](#-troubleshooting)
 - [👥 Anggota Tim](#-anggota-tim)
-
+  
 ---
 
 ## 📌 Deskripsi Website
@@ -168,43 +159,43 @@ Admin dan Superadmin **masuk lewat form login yang sama** (`/admin/login`). Pera
 
 ## 🧭 Flowchart
 
-1. Halaman Awal Pelanggan
+### 1. Halaman Awal Pelanggan
 
 <img width="826" height="1034" alt="Mulawarmanesia-1  Halaman Awal (Pelanggan) drawio" src="https://github.com/user-attachments/assets/c4c59ad9-b581-471a-848d-292413a26dff" />
 
-2. Edit Desain
+### 2. Edit Desain
 
 <img width="992" height="1858" alt="Mulawarmanesia-2  Editor Desain drawio" src="https://github.com/user-attachments/assets/fc71bd05-98a7-4fcd-b0e0-bd6ec3b676a2" />
 
-3. Halaman Pesanan
+### 3. Halaman Pesanan
 
 <img width="1025" height="1866" alt="Mulawarmanesia-3  Halaman Pesanan drawio" src="https://github.com/user-attachments/assets/6660300a-53f8-44eb-bd55-43a06d23461f" />
 
-4. Pembayaran
+### 4. Pembayaran
 
 <img width="1532" height="1194" alt="Mulawarmanesia-4  Pembayaran drawio" src="https://github.com/user-attachments/assets/b02cfd2a-424f-42d2-a050-3ec3ce3070c1" />
 
-5. Lacak Pesanan
+### 5. Lacak Pesanan
 
 <img width="972" height="1034" alt="Mulawarmanesia-5  Lacak Pesanan drawio" src="https://github.com/user-attachments/assets/622fcc97-752e-4c54-bcc9-31293e24d0ec" />
 
-6. Login Admin
+### 6. Login Admin
 
 <img width="934" height="1194" alt="Mulawarmanesia-6  Login Admin   Superadmin drawio" src="https://github.com/user-attachments/assets/04f7bfc9-f5af-4bc2-85f7-e0dfdb054b2a" />
 
-7. Dashboard Admin
+### 7. Dashboard Admin
 
 <img width="1120" height="1182" alt="Mulawarmanesia-7  Dashboard Admin drawio" src="https://github.com/user-attachments/assets/bff58356-8172-467e-9cf6-54083ebf1218" />
 
-8. Dashboard Superadmin
+### 8. Dashboard Superadmin
 
 <img width="1176" height="1886" alt="Mulawarmanesia-8  Dashboard Superadmin drawio" src="https://github.com/user-attachments/assets/7e5b1dee-f555-4209-a7ab-dfacb5f3e9e0" />
 
-9. Kelola Pesanan
+### 9. Kelola Pesanan
 
 <img width="1628" height="2802" alt="Mulawarmanesia-9  Kelola Pesanan drawio" src="https://github.com/user-attachments/assets/a4b573dc-22ea-4de5-86e4-fed9a048b42e" />
 
-10. Kelola Data Master
+### 10. Kelola Data Master
 
 <img width="970" height="1210" alt="Mulawarmanesia-10  Kelola Master Data (Superadmin) drawio" src="https://github.com/user-attachments/assets/a3a65ce5-9352-4e7f-9c7c-1ee431747599" />
 
