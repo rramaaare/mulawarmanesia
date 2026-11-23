@@ -18,14 +18,15 @@ const FACTS = [
   { value: "Bordir & sablon", label: "di workshop sendiri" },
 ];
 
-export function HeroSection() {
+/** `badge`: label PO batch di atas judul (diatur superadmin); kosong/null = tidak ditampilkan. */
+export function HeroSection({ badge }: { badge?: string | null }) {
   return (
     <section className="relative">
       <div className="mx-auto grid max-w-7xl items-center gap-7 px-4 md:gap-12 pb-8 pt-7 md:px-8 md:pt-6 md:pb-12 lg:grid-cols-[1fr_620px] lg:gap-6">
         {/* L4: teks + tombol (kecepatan normal, memudar setelah 600 px scroll) */}
         <ParallaxLayer speed={1} fadeOut className="relative z-10 flex flex-col gap-4 md:gap-6">
           <div className="flex flex-wrap gap-2">
-            <Tag tone="accent">PO Batch November</Tag>
+            {badge && <Tag tone="accent">{badge}</Tag>}
             <Tag>Workshop Samarinda</Tag>
           </div>
           <h1 className="text-5xl font-medium uppercase leading-[1.05] tracking-[-0.03em] md:text-[64px]">

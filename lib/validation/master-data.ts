@@ -1,9 +1,10 @@
 /**
  * File ini untuk apa:
- * Aturan validasi (Zod) untuk halaman superadmin: master data, pengaturan, dan akun admin.
+ * Aturan validasi (Zod) untuk halaman superadmin: master data, pengaturan, pengumuman landing, dan akun admin.
  * Pesan error berbahasa Indonesia dan diawali "[!]" seperti di bagian lain aplikasi.
  */
 import { z } from "zod";
+import { ANNOUNCEMENT_LIMITS } from "@/lib/domain/announcement";
 
 const err = (message: string) => `[!] ${message}`;
 
@@ -49,6 +50,33 @@ export const settingsSchema = z.object({
     .min(1, err("Minimal 1 jam"))
     .max(168, err("Maksimal 168 jam (7 hari)")),
 });
+
+/** Teks pengumuman: spasi ganda/baris baru dirapikan, lalu dibatasi panjangnya. */
+const announcementText = (max: number) =>
+  z
+    .string({ error: err("Teks tidak valid") })
+    .transform((value) => value.replace(/\s+/g, " ").trim())
+    .refine((value) => value.length <= max, err(`Maksimal ${max} karakter`));
+
+/** Pengumuman landing page: label PO batch di hero + maksimal 6 pesan di pita merah. */
+export const announcementSchema = z
+  .object({
+    badge: z.object({ on: z.boolean(), text: announcementText(ANNOUNCEMENT_LIMITS.badge) }),
+    ticker: z
+      .array(z.object({ on: z.boolean(), text: announcementText(ANNOUNCEMENT_LIMITS.tickerText) }))
+      .max(ANNOUNCEMENT_LIMITS.tickerMax, err(`Maksimal ${ANNOUNCEMENT_LIMITS.tickerMax} pesan`)),
+  })
+  .superRefine((value, ctx) => {
+    // Yang dinyalakan harus ada isinya; yang dimatikan boleh kosong (barisnya dibuang saat disimpan)
+    if (value.badge.on && !value.badge.text) {
+      ctx.addIssue({ code: "custom", path: ["badge", "text"], message: err("Isi label PO, atau matikan labelnya") });
+    }
+    value.ticker.forEach((item, index) => {
+      if (item.on && !item.text) {
+        ctx.addIssue({ code: "custom", path: ["ticker", index, "text"], message: err("Isi pesan ini, atau matikan/hapus barisnya") });
+      }
+    });
+  });
 
 /** Kata sandi baru: minimal 8 karakter. */
 const password = z.string().min(8, err("Kata sandi minimal 8 karakter")).max(72, err("Kata sandi maksimal 72 karakter"));

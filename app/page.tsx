@@ -12,6 +12,7 @@ import { PortfolioSection } from "@/features/landing/PortfolioSection";
 import { ProfileSection } from "@/features/landing/ProfileSection";
 import { CtaSection, Testimonials } from "@/features/landing/TestimonialsAndCta";
 import { Ticker } from "@/features/landing/Ticker";
+import { getActiveAnnouncement } from "@/server/services/announcement-service";
 import { Footer } from "@/components/ui/Footer";
 import { Navbar } from "@/components/ui/Navbar";
 import { getCatalog } from "@/server/services/catalog-service";
@@ -19,13 +20,13 @@ import { getCatalog } from "@/server/services/catalog-service";
 export const dynamic = "force-dynamic"; // harga selalu terbaru dari database
 
 export default async function LandingPage() {
-  const catalog = await getCatalog();
+  const [catalog, announcement] = await Promise.all([getCatalog(), getActiveAnnouncement()]);
   return (
     <>
-      <Ticker />
+      <Ticker messages={announcement.ticker} />
       <Navbar />
       <main>
-        <HeroSection />
+        <HeroSection badge={announcement.badge} />
         <ProfileSection />
         <CatalogSection catalog={catalog} />
         <CategoryStrip catalog={catalog} />
