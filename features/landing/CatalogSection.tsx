@@ -15,9 +15,9 @@ import type { Catalog } from "@/server/services/catalog-service";
 
 /** Kartu yang ditampilkan: kategori + ringkasan + latar pastel. */
 const FEATURED = [
-  { product: "PDH", category: "Model 02", image: "/landing/pdh-02-depan.webp", alt: "PDH Model 02 hijau dengan bahu hitam", detail: "Bahu kontras · bordir logo dada", tone: "bg-pastel-blue" },
-  { product: "PDH", category: "Model 07", image: "/landing/pdh-07-depan.webp", alt: "PDH Model 07 putih dengan aksen batik", detail: "Aksen batik · bordir dada & lengan", tone: "bg-pastel-blue" },
-  { product: "VEST", category: "Model 01", image: "/landing/vest-01-depan.webp", alt: "VEST Model 01 hijau army dengan bahu krem", detail: "Empat saku · bordir logo & nama", tone: "bg-pastel-butter" },
+  { product: "PDH", category: "Model 02", image: "/landing/pdh-02-depan-hero.webp", alt: "PDH Model 02 hijau dengan bahu hitam dan logo Universitas Mulawarman", detail: "Bahu kontras · bordir logo dada", tone: "bg-pastel-blue" },
+  { product: "PDH", category: "Model 07", image: "/landing/pdh-07-depan-unmul.webp", alt: "PDH Model 07 putih dengan aksen batik dan logo Universitas Mulawarman", detail: "Aksen batik · bordir dada & lengan", tone: "bg-pastel-blue" },
+  { product: "VEST", category: "Model 01", image: "/landing/vest-01-depan-unmul.webp", alt: "VEST Model 01 hijau army dengan bahu krem dan logo Universitas Mulawarman", detail: "Empat saku · bordir logo & nama", tone: "bg-pastel-butter" },
 ] as const;
 
 export function CatalogSection({ catalog }: { catalog: Catalog }) {

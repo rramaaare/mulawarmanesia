@@ -11,9 +11,9 @@ import { ParallaxLayer } from "@/components/ParallaxLayer";
 import { cn } from "@/lib/cn";
 
 const PROJECTS = [
-  { speed: 1, label: "PDH Model 07", title: "Himpunan Mahasiswa Informatika", detail: "120 pcs · aksen batik parang · bordir dada", tone: "bg-pastel-blue", image: "/landing/pdh-07-parang-depan.webp", alt: "PDH Model 07 putih dengan plaket hitam dan aksen batik parang", drift: undefined },
-  { speed: 1, label: "VEST Model 01", title: "KKN Desa Rimberio", detail: "40 pcs · bordir logo · sablon punggung", tone: "bg-pastel-butter", image: "/landing/vest-01-belakang.webp", alt: "Punggung VEST Model 01 bertuliskan KKN 2026 Desa Rimberio", drift: 48 },
-  { speed: 1, label: "VEST Model 06", title: "Tim K3 Proyek Gudang", detail: "60 pcs · bordir lambang & nama jabatan", tone: "bg-pastel-mint", image: "/landing/vest-06-depan.webp", alt: "VEST Model 06 abu-abu dengan lambang di dada", drift: undefined },
+  { speed: 1, label: "PDH Model 07", title: "Himpunan Mahasiswa Informatika", detail: "120 pcs · aksen batik parang · bordir dada", tone: "bg-pastel-blue", image: "/landing/pdh-07-parang-depan-unmul.webp", alt: "PDH Model 07 putih dengan plaket hitam, aksen batik parang, dan logo Universitas Mulawarman", drift: undefined },
+  { speed: 1, label: "VEST Model 01", title: "KKN Desa Rimberio", detail: "40 pcs · bordir logo · sablon punggung", tone: "bg-pastel-butter", image: "/landing/vest-01-belakang-unmul.webp", alt: "Punggung VEST Model 01 bertuliskan KKN 2026 Desa Rimberio dengan logo Universitas Mulawarman", drift: 48 },
+  { speed: 1, label: "VEST Model 06", title: "Tim K3 Proyek Gudang", detail: "60 pcs · bordir lambang & nama jabatan", tone: "bg-pastel-mint", image: "/landing/vest-06-depan-unmul.webp", alt: "VEST Model 06 abu-abu dengan logo Universitas Mulawarman di dada dan nama Taufik Ramadhani", drift: undefined },
 ] as const;
 
 export function PortfolioSection() {

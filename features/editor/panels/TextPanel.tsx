@@ -143,7 +143,7 @@ function TextForm({
             {...props}
             value={content}
             error={error}
-            placeholder="Contoh: HIMA TEKNIK INFORMATIKA"
+            placeholder="Contoh: INFORMATION SYSTEM ASSOCIATION"
             onChange={(event) => {
               setContent(event.target.value);
               setError(event.target.value.length > 40 ? "[!] Teks maksimal 40 karakter" : undefined);
