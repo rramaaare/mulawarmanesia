@@ -265,14 +265,6 @@ Lalu buka `.env` dan isi nilainya:
 | `SUPERADMIN_EMAIL` dan `SUPERADMIN_PASSWORD` | Akun superadmin awal (kata sandi minimal 8 karakter) |
 | `ENABLE_PAYMENT_SIMULATOR` | Isi `"true"` agar simulator pembayaran tetap aktif di mode produksi (`npm start`). Di `npm run dev` simulator selalu aktif. |
 
-Untuk membuat kunci acak `SESSION_SECRET` dan `PAYMENT_WEBHOOK_SECRET`, jalankan perintah ini dua kali lalu tempel hasilnya:
-
-```bash
-node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"
-```
-
-> ⚠️ File `.env` berisi rahasia dan sudah diabaikan Git. Jangan pernah meng-commit-nya.
-
 **4. Siapkan database**
 
 Buat database kosong, misalnya lewat HeidiSQL (Laragon) atau terminal MySQL:
@@ -355,7 +347,7 @@ npm start           # jalankan hasil build
 <div align="center">
 
 | **Nama** |**Peran** | **Kontribusi** |
-|---|---|---|---|---|
+|---|---|---|
 | Taufik Ramadhani | Ketua tim | backend dan database |
 | Ahmad Sepriza | Anggota | UI/UX dan frontend |
 | Nabila Fitriani | Anggota | dokumentasi dan pengujian |
