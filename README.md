@@ -66,6 +66,8 @@ e. Mendukung UMKM lokal agar lebih siap bersaing lewat pemanfaatan teknologi dig
 
 Halaman awal berisi profil usaha, produk PDH & VEST, cara pesan, portofolio, dan testimoni, lengkap dengan efek paralaks. Ada juga halaman **Panduan Ukuran** untuk membantu memilih ukuran yang pas.
 
+<img width="1440" height="5039" alt="Group" src="https://github.com/user-attachments/assets/6f2d6570-9ce7-41ac-a9bf-f4364b53d43e" />
+
 **2. Editor Desain**
 
 Pelanggan bisa membuat desain seragam langsung di browser:
@@ -76,29 +78,45 @@ Pelanggan bisa membuat desain seragam langsung di browser:
 - Lihat tampak depan dan belakang, plus undo/redo dan zoom
 - Draf tersimpan otomatis di browser, jadi tidak hilang kalau tab ditutup
 
+<img width="1440" height="1163" alt="Group (2)" src="https://github.com/user-attachments/assets/c06f3cce-cbdb-4b81-b9f3-069e15ffc4b3" />
+
 **3. Halaman Pesanan**
 
 Isi ukuran dan jumlah (bisa pakai nama per orang), data pemesan, pengiriman (kirim ke alamat atau ambil di workshop), lalu pilih bayar **Lunas** atau **DP 50%**. Minimal total pesanan **12 pcs**, dan harga dihitung otomatis termasuk diskon volume.
+
+<img width="1440" height="1163" alt="Group (2)" src="https://github.com/user-attachments/assets/f7fe4d26-8c3e-4318-bdf7-0a2d9c56571a" />
 
 **4. Pembayaran**
 
 Pilih metode QRIS, Virtual Account, atau e-wallet lewat payment gateway. Pada versi demo dipakai simulator gateway. Pesanan yang tidak dibayar dalam **24 jam** kedaluwarsa otomatis.
 
+<img width="1440" height="2152" alt="Group (3)" src="https://github.com/user-attachments/assets/b7b61631-dd29-4937-8759-d8abab08204e" />
+
 **5. Lacak Pesanan**
+
+<img width="1440" height="900" alt="Group (4)" src="https://github.com/user-attachments/assets/aa9bd360-fa17-4138-a9af-968c5e5bf1f6" />
 
 Cek status pakai nomor pesanan dan nomor WhatsApp, lengkap dengan timeline 8 tahap. Pelanggan juga bisa melihat alasan revisi jika desainnya diminta diperbaiki.
 
 ### Fitur untuk Admin
 
-**1. Dashboard**
+**1. Login**
+
+Untuk masuk ke sistem, admin perlu memasukkan email dan kata sandi beserta kode verifikasi (2FA).
+
+<img width="1440" height="2374" alt="Group (5)" src="https://github.com/user-attachments/assets/4c3e15e6-ab24-4ef0-9ba4-4f2df6552b79" />
+
+**2. Dashboard**
 
 Ringkasan pesanan dan pendapatan, tren penjualan, kategori dan ukuran terlaris, kapasitas produksi, konversi, dan warna kain yang paling laku.
 
-**2. Kelola Pesanan**
+<img width="1440" height="900" alt="Group (6)" src="https://github.com/user-attachments/assets/3898a504-cae4-4a16-9535-4657d99ed213" />
+
+**3. Kelola Pesanan**
 
 Lihat daftar pesanan dengan pencarian dan filter status, buka detail desain dan unduh file logo, ubah status produksi, minta revisi ke pelanggan, cetak **lembar produksi** satu halaman untuk workshop, dan ekspor data ke CSV.
 
-**3. Produksi**
+**4. Produksi**
 
 Antrean kerja workshop: pesanan yang sedang diproduksi, di tahap QC, dan siap kirim, lengkap dengan total pcs tiap tahap.
 
