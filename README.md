@@ -16,9 +16,6 @@
 ![Prisma](https://img.shields.io/badge/Prisma-7-2D3748?style=for-the-badge&logo=prisma&logoColor=white)
 ![Node.js](https://img.shields.io/badge/Node.js-22.12+-5FA04E?style=for-the-badge&logo=nodedotjs&logoColor=white)
 
-**Website profil bisnis + kustomisasi dan pemesanan seragam PDH & VEST**
-*Digital Innovation for Local Impact*
-
 </div>
 
 ---
@@ -48,7 +45,7 @@
 Selama ini pesan seragam di UMKM konveksi biasanya lewat WhatsApp: tanya model, kirim contoh gambar, tawar-menawar, transfer manual, lalu menunggu tanpa kabar. Website ini mengubah proses itu jadi alur yang jelas dan bisa dijalankan sendiri oleh pelanggan, sementara pemilik usaha mendapat panel untuk mengelola pesanan dan produksi.
 
 > Dibuat untuk **Lomba Pengembangan Website FUAD FAIR 2026** (UINSI Samarinda)
-> Tema: *Digital Innovation for Local Impact* · Kategori: **Local Business Innovation** (Bisnis dan UMKM)
+> Tema: *Local Business Innovation (Bisnis dan UMKM)*
 
 Pengguna website ini ada tiga:
 
@@ -76,7 +73,7 @@ e. Mendukung UMKM lokal agar lebih siap bersaing lewat pemanfaatan teknologi dig
 
 ## ⚙️ Fitur Utama
 
-### 🧑 Fitur untuk Pelanggan
+### Fitur untuk Pelanggan
 
 **1. Landing Page**
 
@@ -104,7 +101,7 @@ Pilih metode QRIS, Virtual Account, atau e-wallet lewat payment gateway. Pada ve
 
 Cek status pakai nomor pesanan dan nomor WhatsApp, lengkap dengan timeline 8 tahap. Pelanggan juga bisa melihat alasan revisi jika desainnya diminta diperbaiki.
 
-### 👷 Fitur untuk Admin
+### Fitur untuk Admin
 
 **1. Dashboard**
 
@@ -122,7 +119,7 @@ Antrean kerja workshop: pesanan yang sedang diproduksi, di tahap QC, dan siap ki
 
 **🗂️ Master Data**
 
-Atur harga dasar, biaya dekorasi, palet warna dan stok kain (bisa tambah warna baru), serta tarif ongkir.
+Untuk mengatur harga dasar, biaya dekorasi, palet warna dan stok kain (bisa tambah warna baru), serta tarif ongkir.
 
 **👤 Akun Admin**
 
@@ -130,7 +127,7 @@ Tambah akun (pilih peran Admin atau Superadmin), nonaktifkan atau aktifkan akun,
 
 **⚙️ Pengaturan**
 
-Atur kapasitas produksi mingguan dan batas waktu bayar pesanan baru.
+Mengatur kapasitas produksi mingguan dan batas waktu bayar pesanan baru.
 
 **📜 Log Aktivitas**
 
@@ -152,8 +149,6 @@ Admin dan Superadmin **masuk lewat form login yang sama** (`/admin/login`). Pera
 | Akun admin | ❌ | ✅ |
 | Pengaturan | ❌ | ✅ |
 | Log aktivitas | ❌ | ✅ |
-
-Pembatasan ini dijaga di **server** pada setiap permintaan, bukan hanya disembunyikan di menu. Admin biasa yang membuka halaman superadmin lewat alamat langsung akan dikembalikan ke dashboard, dan permintaan API-nya ditolak dengan kode 403.
 
 ---
 
@@ -216,71 +211,6 @@ Pembatasan ini dijaga di **server** pada setiap permintaan, bukan hanya disembun
 10. Kelola Data Master
 
 <img width="970" height="1210" alt="Mulawarmanesia-10  Kelola Master Data (Superadmin) drawio" src="https://github.com/user-attachments/assets/a3a65ce5-9352-4e7f-9c7c-1ee431747599" />
-
-
-### 🔄 Alur Pemesanan Pelanggan
-
-```mermaid
-flowchart TD
-    A([Mulai]) --> B[/Buka Landing Page/]
-    B --> C{Mau custom desain?}
-    C -- Tidak --> W[Tanya via WhatsApp] --> Z([Selesai])
-    C -- Ya --> D[/Editor: model, warna, logo, teks/]
-    D --> E{Logo dan teks valid?}
-    E -- Tidak --> D
-    E -- Ya --> F[/Halaman Pesanan: ukuran, data pemesan, pengiriman, skema bayar/]
-    F --> G{Data valid dan minimal 12 pcs?}
-    G -- Tidak --> F
-    G -- Ya --> H[Pesanan tersimpan, nomor MLW-... dibuat]
-    H --> I[/Halaman Pembayaran/]
-    I --> J{Pembayaran berhasil?}
-    J -- Ditolak --> I
-    J -- Waktu 24 jam habis --> D
-    J -- Ya --> K[/Pesanan Berhasil/]
-    K --> L[/Lacak Pesanan/]
-    L --> Z
-```
-
-### 🏷️ Status Pesanan
-
-Status hanya boleh maju satu tahap. Satu-satunya yang boleh bolak-balik adalah **Cek desain** dan **Perlu revisi**.
-
-```mermaid
-stateDiagram-v2
-    [*] --> menunggu_pembayaran
-    menunggu_pembayaran --> kedaluwarsa: lewat 24 jam
-    menunggu_pembayaran --> dibayar: pembayaran tercatat
-    dibayar --> cek_desain
-    cek_desain --> perlu_revisi: admin minta revisi
-    perlu_revisi --> cek_desain
-    cek_desain --> produksi: disetujui, desain dikunci
-    produksi --> qc
-    qc --> siap_kirim: wajib sudah lunas
-    siap_kirim --> dikirim: isi kurir dan nomor resi
-    dikirim --> selesai
-    selesai --> [*]
-```
-
----
-### 📐 Alur Kode
-
-```
-Browser (pelanggan)
-   │  membuka halaman / mengisi form
-   ▼
-app/<halaman>/page.tsx        ← halaman (Server Component)
-   ▼
-features/<fitur>/*.tsx        ← komponen interaktif ("use client")
-   │  fetch("/api/...")
-   ▼
-app/api/<endpoint>/route.ts   ← pintu API (tipis, hanya memanggil service)
-   ▼
-server/services/*.ts          ← logika + transaksi database
-   │            ▲
-   │            └── lib/domain/*.ts  aturan murni (harga, status)
-   ▼
-Prisma → MySQL
-```
 
 ---
 
@@ -409,48 +339,6 @@ npm start           # jalankan hasil build
 
 ---
 
-## 📁 Struktur Proyek
-
-```
-app/            halaman (URL) dan route API tipis
-components/     komponen UI yang dipakai ulang (Button, Card, Field, Modal, Garment, ...)
-features/       komponen per fitur: landing, editor, order, payment, status, tracking, admin
-lib/domain/     aturan bisnis murni: harga, urutan status, nomor pesanan, nomor WhatsApp
-lib/validation/ aturan validasi Zod (dipakai browser dan server)
-server/         service (logika + transaksi database), login admin dan peran, upload file
-prisma/         skema database, migrasi, seed
-tests/          tes otomatis
-docs/           PRD, desain, flowchart, dan panduan membaca kode
-storage/        file logo unggahan pelanggan (dibuat otomatis, tidak masuk Git)
-```
-
----
-
-## 🛡️ Integritas Data (ACID)
-
-- Checkout menulis semua tabel pesanan dalam **satu transaksi**. Kalau gagal di tengah jalan, tidak ada data setengah jadi.
-- Nomor pesanan `MLW-YYMM-NNNN` dibuat dari penghitung yang dikunci, jadi checkout bersamaan tidak menghasilkan nomor kembar.
-- Webhook pembayaran **idempoten**: dikirim dua kali pun, uang hanya tercatat sekali.
-- Urutan status dan aturan DP dijaga di **server**, bukan hanya di tombol.
-- Harga selalu dihitung ulang di server, jadi tidak bisa diakali dari browser.
-- Peran admin dan superadmin dicek di server pada setiap permintaan, bukan hanya disembunyikan di menu.
-- Setiap perubahan superadmin ditulis ke log aktivitas dalam transaksi yang sama dengan perubahannya.
-- Login dibatasi: 5 kali gagal mengunci akun 15 menit, dan sesi berlaku 8 jam.
-- File logo diperiksa isinya (bukan hanya ekstensi), maksimal 5 MB, dan SVG berskrip ditolak.
-
-Aturan-aturan ini diuji otomatis di folder `tests/` (misalnya `acid.test.ts` dan `superadmin.test.ts`).
-
----
-
-## 📝 Catatan Demo
-
-- Pembayaran memakai **simulator gateway** (`/gateway/...`) yang mengirim webhook bertanda tangan HMAC lewat jalur yang sama dengan webhook asli. Penyedia nyata seperti Midtrans atau Xendit bisa dipasang kemudian tanpa mengubah halaman.
-- Harga, minimal order, durasi produksi, alamat, dan testimoni adalah **data contoh**.
-- Akun admin dan superadmin dibuat dari `.env` saat `npm run seed`. Tidak ada kata sandi bawaan di repository ini.
-- Belum tersedia: notifikasi email/WhatsApp otomatis, 2FA admin, halaman laporan, dan unduh PNG desain.
-
----
-
 ## 👥 Anggota Tim
 
 <div align="center">
@@ -464,15 +352,6 @@ Aturan-aturan ini diuji otomatis di folder `tests/` (misalnya `acid.test.ts` dan
 </div>
 
 ---
-
-## 🙏 Atribusi
-
-- Font [Poppins](https://fonts.google.com/specimen/Poppins) (SIL Open Font License).
-- Library open source: Next.js, React, Tailwind CSS, Prisma, Zod, GSAP, Recharts, qrcode.react, bcryptjs, Vitest (lisensi masing-masing).
-- Ilustrasi garmen dibuat sendiri sebagai SVG.
-- Desain antarmuka dibuat di FigCraft (`docs/MULAWARMANESIA Website v1.figcraft`).
-- Header dan animasi pengetikan di README memakai layanan [capsule-render](https://github.com/kyechan99/capsule-render) dan [readme-typing-svg](https://github.com/DenverCoder1/readme-typing-svg).
-- Pengembangan dibantu AI (diperbolehkan oleh juknis lomba).
 
 <div align="center">
 
