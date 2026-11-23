@@ -80,7 +80,7 @@ Pelanggan bisa membuat desain seragam langsung di browser:
 
 Isi ukuran dan jumlah (bisa pakai nama per orang), data pemesan, pengiriman (kirim ke alamat atau ambil di workshop), lalu pilih bayar **Lunas** atau **DP 50%**. Minimal total pesanan **12 pcs**, dan harga dihitung otomatis termasuk diskon volume.
 
-![Uploading image.png…]()<br>
+<br>
 
 **4. Pembayaran**
 
