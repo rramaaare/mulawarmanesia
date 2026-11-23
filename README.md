@@ -67,6 +67,7 @@ e. Mendukung UMKM lokal agar lebih siap bersaing lewat pemanfaatan teknologi dig
 Halaman awal berisi profil usaha, produk PDH & VEST, cara pesan, portofolio, dan testimoni, lengkap dengan efek paralaks. Ada juga halaman **Panduan Ukuran** untuk membantu memilih ukuran yang pas.
 
 <img width="1440" height="5039" alt="Group" src="https://github.com/user-attachments/assets/6f2d6570-9ce7-41ac-a9bf-f4364b53d43e" />
+<br>
 
 **2. Editor Desain**
 
@@ -79,24 +80,28 @@ Pelanggan bisa membuat desain seragam langsung di browser:
 - Draf tersimpan otomatis di browser, jadi tidak hilang kalau tab ditutup
 
 <img width="1440" height="1163" alt="Group (2)" src="https://github.com/user-attachments/assets/c06f3cce-cbdb-4b81-b9f3-069e15ffc4b3" />
+<br>
 
 **3. Halaman Pesanan**
 
 Isi ukuran dan jumlah (bisa pakai nama per orang), data pemesan, pengiriman (kirim ke alamat atau ambil di workshop), lalu pilih bayar **Lunas** atau **DP 50%**. Minimal total pesanan **12 pcs**, dan harga dihitung otomatis termasuk diskon volume.
 
-<img width="1440" height="1163" alt="Group (2)" src="https://github.com/user-attachments/assets/f7fe4d26-8c3e-4318-bdf7-0a2d9c56571a" />
+<img width="1440" height="2152" alt="Group (3)" src="https://github.com/user-attachments/assets/b7b61631-dd29-4937-8759-d8abab08204e" />
+<br>
 
 **4. Pembayaran**
 
 Pilih metode QRIS, Virtual Account, atau e-wallet lewat payment gateway. Pada versi demo dipakai simulator gateway. Pesanan yang tidak dibayar dalam **24 jam** kedaluwarsa otomatis.
 
-<img width="1440" height="2152" alt="Group (3)" src="https://github.com/user-attachments/assets/b7b61631-dd29-4937-8759-d8abab08204e" />
+<img width="1440" height="1155" alt="Group (11)" src="https://github.com/user-attachments/assets/fc3f926c-243d-43c7-8787-2909122dcfea" />
+<br>
 
 **5. Lacak Pesanan**
 
-<img width="1440" height="900" alt="Group (4)" src="https://github.com/user-attachments/assets/aa9bd360-fa17-4138-a9af-968c5e5bf1f6" />
-
 Cek status pakai nomor pesanan dan nomor WhatsApp, lengkap dengan timeline 8 tahap. Pelanggan juga bisa melihat alasan revisi jika desainnya diminta diperbaiki.
+
+<img width="1440" height="1423" alt="Group (12)" src="https://github.com/user-attachments/assets/8b50ca56-d199-44f8-9872-8180a0ed0e18" />
+<br>
 
 ### Fitur untuk Admin
 
@@ -104,27 +109,38 @@ Cek status pakai nomor pesanan dan nomor WhatsApp, lengkap dengan timeline 8 tah
 
 Untuk masuk ke sistem, admin perlu memasukkan email dan kata sandi beserta kode verifikasi (2FA).
 
-<img width="1440" height="2374" alt="Group (5)" src="https://github.com/user-attachments/assets/4c3e15e6-ab24-4ef0-9ba4-4f2df6552b79" />
+<img width="1440" height="900" alt="Group (4)" src="https://github.com/user-attachments/assets/aa9bd360-fa17-4138-a9af-968c5e5bf1f6" />
+<br>
 
 **2. Dashboard**
 
 Ringkasan pesanan dan pendapatan, tren penjualan, kategori dan ukuran terlaris, kapasitas produksi, konversi, dan warna kain yang paling laku.
 
-<img width="1440" height="900" alt="Group (6)" src="https://github.com/user-attachments/assets/3898a504-cae4-4a16-9535-4657d99ed213" />
+<img width="1440" height="2374" alt="Group (5)" src="https://github.com/user-attachments/assets/4c3e15e6-ab24-4ef0-9ba4-4f2df6552b79" />
+<br>
 
 **3. Kelola Pesanan**
 
 Lihat daftar pesanan dengan pencarian dan filter status, buka detail desain dan unduh file logo, ubah status produksi, minta revisi ke pelanggan, cetak **lembar produksi** satu halaman untuk workshop, dan ekspor data ke CSV.
 
+<img width="1440" height="1078" alt="Group (8)" src="https://github.com/user-attachments/assets/fa3dfdd0-61e4-4440-883f-dbc0a53823ae" />
+<br>
+
 **4. Produksi**
 
 Antrean kerja workshop: pesanan yang sedang diproduksi, di tahap QC, dan siap kirim, lengkap dengan total pcs tiap tahap.
+
+<img width="1440" height="900" alt="Group (9)" src="https://github.com/user-attachments/assets/f65dbf40-a51e-4d6b-b396-7c0e2f4f2801" />
+<br>
 
 ### 🛠️ Fitur Tambahan Superadmin
 
 **🗂️ Master Data**
 
 Untuk mengatur harga dasar, biaya dekorasi, palet warna dan stok kain (bisa tambah warna baru), serta tarif ongkir.
+
+<img width="1440" height="938" alt="Group (10)" src="https://github.com/user-attachments/assets/831d0884-f4ea-437b-b9d1-fbf3298933a3" />
+<br>
 
 **👤 Akun Admin**
 
