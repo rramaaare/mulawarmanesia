@@ -74,25 +74,25 @@ Pelanggan bisa membuat desain seragam langsung di browser:
 - Lihat tampak depan dan belakang, plus undo/redo dan zoom
 - Draf tersimpan otomatis di browser, jadi tidak hilang kalau tab ditutup
 
-<br>
+<img width="1350" height="679" alt="Screenshot 2026-11-23 223059" src="https://github.com/user-attachments/assets/7c190fd7-337c-43ee-847b-e15493ea1547" /><br>
 
 **3. Halaman Pesanan**
 
 Isi ukuran dan jumlah (bisa pakai nama per orang), data pemesan, pengiriman (kirim ke alamat atau ambil di workshop), lalu pilih bayar **Lunas** atau **DP 50%**. Minimal total pesanan **12 pcs**, dan harga dihitung otomatis termasuk diskon volume.
 
-<br>
+<img width="1350" height="677" alt="Screenshot 2026-11-23 223253" src="https://github.com/user-attachments/assets/6b12af9d-9208-439f-a9ba-d4299c762427" /><br>
 
 **4. Pembayaran**
 
 Pilih metode QRIS, Virtual Account, atau e-wallet lewat payment gateway. Pada versi demo dipakai simulator gateway. Pesanan yang tidak dibayar dalam **24 jam** kedaluwarsa otomatis.
 
-![Uploading image.png…]()<br>  
+<img width="1352" height="678" alt="Screenshot 2026-11-23 223509" src="https://github.com/user-attachments/assets/1d5dda33-948b-4794-abcd-e944d5c005a3" /><br>
 
 **5. Lacak Pesanan**
 
 Cek status pakai nomor pesanan dan nomor WhatsApp, lengkap dengan timeline 8 tahap. Pelanggan juga bisa melihat alasan revisi jika desainnya diminta diperbaiki.
 
-![Uploading image.png…]()<br>
+<img width="1354" height="678" alt="Screenshot 2026-11-23 223728" src="https://github.com/user-attachments/assets/dea1d645-28cf-4ef2-8068-68f6345ccf6d" /><br>
 
 ---
 ### Fitur untuk Admin
