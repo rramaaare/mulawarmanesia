@@ -99,27 +99,27 @@ Cek status pakai nomor pesanan dan nomor WhatsApp, lengkap dengan timeline 8 tah
 
 **1. Login**
 
-Untuk masuk ke sistem, admin perlu memasukkan email dan kata sandi beserta kode verifikasi (2FA).
+Untuk masuk ke sistem, admin perlu memasukkan email dan kata sandi.
 
-<img width="1440" height="900" alt="Group (4)" src="https://github.com/user-attachments/assets/aa9bd360-fa17-4138-a9af-968c5e5bf1f6" /><br>
+<img width="1365" height="678" alt="image" src="https://github.com/user-attachments/assets/2cde918c-019a-4dc6-a33a-925ad6b5efd6" /><br>
 
 **2. Dashboard**
 
 Ringkasan pesanan dan pendapatan, tren penjualan, kategori dan ukuran terlaris, kapasitas produksi, konversi, dan warna kain yang paling laku.
 
-<img width="1440" height="2374" alt="Group (5)" src="https://github.com/user-attachments/assets/4c3e15e6-ab24-4ef0-9ba4-4f2df6552b79" /><br>
+<img width="1349" height="677" alt="image" src="https://github.com/user-attachments/assets/9b53b505-bfac-4227-b926-16103953c4bf" /><br>
 
 **3. Kelola Pesanan**
 
 Lihat daftar pesanan dengan pencarian dan filter status, buka detail desain dan unduh file logo, ubah status produksi, minta revisi ke pelanggan, cetak **lembar produksi** satu halaman untuk workshop, dan ekspor data ke CSV.
 
-<img width="1440" height="1078" alt="Group (8)" src="https://github.com/user-attachments/assets/fa3dfdd0-61e4-4440-883f-dbc0a53823ae" /><br>
+<img width="1363" height="677" alt="image" src="https://github.com/user-attachments/assets/3fb465da-f33d-4013-a5e2-16181b3fb77b" /><br>
 
 **4. Produksi**
 
 Antrean kerja workshop: pesanan yang sedang diproduksi, di tahap QC, dan siap kirim, lengkap dengan total pcs tiap tahap.
 
-<img width="1440" height="900" alt="Group (9)" src="https://github.com/user-attachments/assets/f65dbf40-a51e-4d6b-b396-7c0e2f4f2801" /><br>
+<img width="1344" height="676" alt="image" src="https://github.com/user-attachments/assets/7070ea61-cf23-416c-837d-1ddbb28c4090" /><br>
 
 ---
 
@@ -129,19 +129,25 @@ Antrean kerja workshop: pesanan yang sedang diproduksi, di tahap QC, dan siap ki
 
 Untuk mengatur harga dasar, biaya dekorasi, palet warna dan stok kain (bisa tambah warna baru), serta tarif ongkir.
 
-<img width="1440" height="938" alt="Group (10)" src="https://github.com/user-attachments/assets/831d0884-f4ea-437b-b9d1-fbf3298933a3" /><br>
+<img width="1346" height="678" alt="image" src="https://github.com/user-attachments/assets/df6aad1d-b907-436e-a5c7-76ecef2f3238" /><br>
 
 **👤 Akun Admin**
 
 Tambah akun (pilih peran Admin atau Superadmin), nonaktifkan atau aktifkan akun, dan reset kata sandi. Superadmin tidak bisa menonaktifkan dirinya sendiri, dan harus selalu ada minimal satu superadmin aktif.
 
+<img width="1365" height="677" alt="image" src="https://github.com/user-attachments/assets/e9132cbc-49ed-46ca-836c-9305cf74ca87" /><br>
+
 **⚙️ Pengaturan**
 
 Mengatur kapasitas produksi mingguan dan batas waktu bayar pesanan baru.
 
+<img width="1365" height="675" alt="image" src="https://github.com/user-attachments/assets/b87e024c-3585-4e34-b313-726b845cc0ff" /><br>
+
 **📜 Log Aktivitas**
 
 Catatan perubahan harga, biaya, stok, ongkir, akun, pengaturan, dan status pesanan.
+
+<img width="1365" height="677" alt="image" src="https://github.com/user-attachments/assets/22634d27-ecda-4ac7-a4f1-7d73a2a70d35" /><br>
 
 ---
 
@@ -358,8 +364,6 @@ npm start           # jalankan hasil build
 <div align="center">
 
 <br/>
-
-**Dibuat dengan ❤️ untuk UMKM konveksi Samarinda**
 
 [⬆️ Kembali ke Awal](#)
 
